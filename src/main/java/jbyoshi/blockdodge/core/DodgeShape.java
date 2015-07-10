@@ -1,13 +1,15 @@
-package jbyoshi.blockdodge;
+package jbyoshi.blockdodge.core;
 
 import java.awt.*;
 import java.awt.geom.*;
 import java.util.*;
 
+import jbyoshi.blockdodge.*;
+
 public abstract class DodgeShape extends Rectangle2D.Double {
 	protected final BlockDodge game;
 	protected final Random rand = new Random();
-	private final Color c;
+	final Color color;
 	private static final float DROP_SCALE = 0.25f;
 	private static final int DROP_COUNT = 10;
 	private int dropCount = 0;
@@ -15,20 +17,26 @@ public abstract class DodgeShape extends Rectangle2D.Double {
 	public DodgeShape(BlockDodge game, double x, double y, double w, double h, Color c) {
 		super(x, y, w, h);
 		this.game = game;
-		this.c = c;
+		this.color = c;
 	}
 
-	public abstract void move();
+	protected abstract void move();
 
-	public Color getColor() {
-		return c;
+	public final void explode() {
+		explode0();
 	}
 
-	public void explode() {
-		game.remove(this);
+	void explode0() {
 		for (float i = 0; i < DROP_COUNT; i++) {
 			game.add(new Drop((float) (rand.nextFloat() * 2 * Math.PI)));
 		}
+		game.remove(this);
+	}
+
+	protected void onCollided(DodgeShape other) {
+	}
+
+	void onRemoved() {
 	}
 
 	protected final class Drop extends BounceDodgeShape {
@@ -36,7 +44,7 @@ public abstract class DodgeShape extends Rectangle2D.Double {
 
 		protected Drop(float dir) {
 			super(DodgeShape.this.game, DodgeShape.this.x, DodgeShape.this.y, DodgeShape.this.width * DROP_SCALE,
-					DodgeShape.this.height * DROP_SCALE, DodgeShape.this.c, dir);
+					DodgeShape.this.height * DROP_SCALE, DodgeShape.this.color, dir);
 			DodgeShape.this.dropCount++;
 		}
 
@@ -49,12 +57,27 @@ public abstract class DodgeShape extends Rectangle2D.Double {
 		}
 
 		@Override
-		public void explode() {
+		void explode0() {
 			game.remove(this);
 		}
 
+		@Override
+		protected void onCollided(DodgeShape other) {
+			if (other instanceof Drop && ((Drop) other).outer() == DodgeShape.this) {
+				return;
+			}
+			game.remove(this);
+		}
+
+		private DodgeShape outer() {
+			return DodgeShape.this;
+		}
+
+		@Override
 		void onRemoved() {
-			DodgeShape.this.dropCount--;
+			if (DodgeShape.this.dropCount-- == 0) {
+				DodgeShape.this.onRemoved();
+			}
 		}
 	}
 

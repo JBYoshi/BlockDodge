@@ -1,4 +1,4 @@
-package jbyoshi.blockdodge;
+package jbyoshi.blockdodge.core;
 
 import java.awt.*;
 import java.awt.image.*;
@@ -6,9 +6,11 @@ import java.util.*;
 
 import javax.swing.*;
 
+import jbyoshi.blockdodge.*;
+
 public final class BlockDodge extends JPanel {
 	private final int width, height;
-	private final Random rand = new Random();
+	final Random rand = new Random();
 	private static final Color[] COLORS = new Color[] { Color.BLUE, Color.CYAN, Color.GREEN, Color.MAGENTA,
 			Color.ORANGE, Color.PINK, Color.RED, Color.YELLOW };
 	private static final int FRAME_TIME = 1000 / 40;
@@ -32,8 +34,8 @@ public final class BlockDodge extends JPanel {
 
 	public void remove(DodgeShape shape) {
 		shapes.remove(shape);
-		if (shape instanceof DodgeShape.Drop) {
-			((DodgeShape.Drop) shape).onRemoved();
+		if (shape.getDropCount() == 0) {
+			shape.onRemoved();
 		}
 	}
 
@@ -57,6 +59,33 @@ public final class BlockDodge extends JPanel {
 			for (DodgeShape shape : new HashSet<DodgeShape>(shapes)) {
 				shape.move();
 			}
+			for (DodgeShape one : new HashSet<DodgeShape>(shapes)) {
+				if (!shapes.contains(one)) {
+					continue; // Removed during a previous iteration
+				}
+				for (DodgeShape two : new HashSet<DodgeShape>(shapes)) {
+					if (!shapes.contains(two) || one == two) {
+						continue;
+					}
+					if (one.intersects(two)) {
+						// Drops take care of it themselves.
+						boolean handled = false;
+						if (one instanceof DodgeShape.Drop) {
+							one.onCollided(two);
+							handled = true;
+						}
+						if (two instanceof DodgeShape.Drop) {
+							two.onCollided(one);
+							handled = true;
+						}
+
+						if (!handled) {
+							one.onCollided(two);
+							two.onCollided(one);
+						}
+					}
+				}
+			}
 
 			if (timer % 100 == 0) {
 				int w = rand.nextInt(25) + 8;
@@ -71,7 +100,7 @@ public final class BlockDodge extends JPanel {
 			BufferedImage buffer = createBuffer();
 			Graphics2D g = buffer.createGraphics();
 			for (DodgeShape shape : shapes) {
-				g.setColor(shape.getColor());
+				g.setColor(shape.color);
 				g.fill(shape);
 			}
 			g.dispose();

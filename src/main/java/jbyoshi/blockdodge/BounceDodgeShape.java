@@ -2,6 +2,8 @@ package jbyoshi.blockdodge;
 
 import java.awt.*;
 
+import jbyoshi.blockdodge.core.*;
+
 public class BounceDodgeShape extends DodgeShape {
 	private double xMove, yMove;
 
@@ -12,7 +14,7 @@ public class BounceDodgeShape extends DodgeShape {
 	}
 
 	@Override
-	public void move() {
+	protected void move() {
 		x += xMove;
 		y += yMove;
 		if (xMove > 0) {
