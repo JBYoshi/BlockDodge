@@ -1,7 +1,6 @@
 package jbyoshi.blockdodge;
 
 import java.awt.*;
-import java.awt.geom.*;
 import java.awt.image.*;
 import java.util.*;
 
@@ -13,9 +12,9 @@ public final class BlockDodge extends JPanel {
 	private static final Color[] COLORS = new Color[] { Color.BLUE, Color.CYAN, Color.GREEN, Color.MAGENTA,
 			Color.ORANGE, Color.PINK, Color.RED, Color.YELLOW };
 	private static final int FRAME_TIME = 1000 / 40;
-	private static final int PLAYER_SIZE = 32;
-	private static final Color PLAYER_COLOR = Color.WHITE;
 	private BufferedImage buffer;
+	private final Set<DodgeShape> shapes = new HashSet<DodgeShape>();
+	private final PlayerDodgeShape player = new PlayerDodgeShape(this);
 
 	public BlockDodge(int width, int height) {
 		this.width = width;
@@ -27,22 +26,36 @@ public final class BlockDodge extends JPanel {
 		return new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 	}
 
+	public void add(DodgeShape shape) {
+		shapes.add(shape);
+	}
+
+	public void remove(DodgeShape shape) {
+		shapes.remove(shape);
+		if (shape instanceof DodgeShape.Drop) {
+			((DodgeShape.Drop) shape).onRemoved();
+		}
+	}
+
+	public boolean contains(DodgeShape shape) {
+		return shapes.contains(shape);
+	}
+
+	public PlayerDodgeShape getPlayer() {
+		return player;
+	}
+
 	public void go() {
-		Rectangle2D player = new Rectangle2D.Float(width / 2 - PLAYER_SIZE / 2, height / 2 - PLAYER_SIZE / 2,
-				PLAYER_SIZE, PLAYER_SIZE);
-		Set<DodgeShape> shapes = new HashSet<DodgeShape>();
+		player.reset();
+		shapes.clear();
+		shapes.add(player);
 		int timer = 0;
-		int deadTimer = -1;
 
 		while (true) {
 			long start = System.currentTimeMillis();
 
 			for (DodgeShape shape : new HashSet<DodgeShape>(shapes)) {
 				shape.move();
-				if (deadTimer < 0 && shape.intersects(player)) {
-					deadTimer = 100;
-					// TODO explode
-				}
 			}
 
 			if (timer % 100 == 0) {
@@ -52,13 +65,11 @@ public final class BlockDodge extends JPanel {
 				int y = 0; // TODO
 				float dir = (float) (rand.nextFloat() * Math.PI);
 				Color c = COLORS[rand.nextInt(COLORS.length)];
-				shapes.add(new BadDodgeShape(this, x, y, w, h, c, dir));
+				add(new BadDodgeShape(this, x, y, w, h, c, dir));
 			}
 
 			BufferedImage buffer = createBuffer();
 			Graphics2D g = buffer.createGraphics();
-			g.setColor(PLAYER_COLOR);
-			g.fill(player);
 			for (DodgeShape shape : shapes) {
 				g.setColor(shape.getColor());
 				g.fill(shape);
@@ -68,9 +79,7 @@ public final class BlockDodge extends JPanel {
 			repaint();
 
 			timer++;
-			if (deadTimer > 0) {
-				deadTimer--;
-			} else if (deadTimer == 0) {
+			if (!contains(player) && player.getDropCount() == 0) {
 				return;
 			}
 			long sleep = FRAME_TIME - (System.currentTimeMillis() - start);

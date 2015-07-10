@@ -11,7 +11,9 @@ public class BadDodgeShape extends BounceDodgeShape {
 	@Override
 	public void move() {
 		super.move();
-		// TODO Kill the player on contact
+		if (intersects(game.getPlayer())) {
+			game.getPlayer().explode();
+		}
 	}
 
 }
