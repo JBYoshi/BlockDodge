@@ -11,15 +11,10 @@ public class BadDodgeShape extends BounceDodgeShape {
 	}
 
 	@Override
-	protected void move() {
-		super.move();
-		if (intersects(game.getPlayer())) {
-			game.getPlayer().explode();
-		}
-	}
-
-	@Override
 	protected void onCollided(DodgeShape other) {
+		if (other == game.getPlayer()) {
+			other.explode();
+		}
 		explode();
 	}
 

@@ -6,17 +6,18 @@ import java.util.*;
 
 import jbyoshi.blockdodge.*;
 
-public abstract class DodgeShape extends Rectangle2D.Double {
+public abstract class DodgeShape {
 	protected final BlockDodge game;
 	protected final Random rand = new Random();
 	final Color color;
 	private static final float DROP_SCALE = 0.25f;
 	private static final int DROP_COUNT = 10;
 	private int dropCount = 0;
+	final Rectangle2D shape;
 
 	public DodgeShape(BlockDodge game, double x, double y, double w, double h, Color c) {
-		super(x, y, w, h);
 		this.game = game;
+		this.shape = new Rectangle2D.Double(x, y, w, h);
 		this.color = c;
 	}
 
@@ -43,8 +44,9 @@ public abstract class DodgeShape extends Rectangle2D.Double {
 		private int time = 100;
 
 		protected Drop(float dir) {
-			super(DodgeShape.this.game, DodgeShape.this.x, DodgeShape.this.y, DodgeShape.this.width * DROP_SCALE,
-					DodgeShape.this.height * DROP_SCALE, DodgeShape.this.color, dir);
+			super(DodgeShape.this.game, DodgeShape.this.getX(), DodgeShape.this.getY(),
+					DodgeShape.this.getWidth() * DROP_SCALE, DodgeShape.this.getHeight() * DROP_SCALE,
+					DodgeShape.this.color, dir);
 			DodgeShape.this.dropCount++;
 		}
 
@@ -85,55 +87,31 @@ public abstract class DodgeShape extends Rectangle2D.Double {
 		return dropCount;
 	}
 
-	@Override
-	public boolean contains(double x, double y) {
-		return game.contains(this) && super.contains(x, y);
+	public double getX() {
+		return shape.getX();
 	}
 
-	@Override
-	public boolean contains(double x, double y, double w, double h) {
-		return game.contains(this) && super.contains(x, y, w, h);
+	public double getY() {
+		return shape.getY();
 	}
 
-	@Override
-	public boolean contains(Rectangle2D rect) {
-		if (rect instanceof DodgeShape) {
-			DodgeShape ds = (DodgeShape) rect;
-			if (!game.contains(ds)) {
-				return false;
-			}
-		}
-		return game.contains(this) && super.contains(rect);
+	public double getWidth() {
+		return shape.getWidth();
 	}
 
-	@Override
-	public boolean intersects(double x, double y, double w, double h) {
-		return game.contains(this) && super.intersects(x, y, w, h);
+	public double getHeight() {
+		return shape.getHeight();
 	}
 
-	@Override
-	public boolean intersects(Rectangle2D rect) {
-		if (rect instanceof DodgeShape) {
-			DodgeShape ds = (DodgeShape) rect;
-			if (!game.contains(ds)) {
-				return false;
-			}
-		}
-		return game.contains(this) && super.intersects(rect);
+	protected void setX(double x) {
+		shape.setRect(x, getY(), getWidth(), getHeight());
 	}
 
-	@Override
-	public boolean intersectsLine(double x1, double y1, double x2, double y2) {
-		return game.contains(this) && super.intersectsLine(x1, y1, x2, y2);
+	protected void setY(double y) {
+		shape.setRect(getX(), y, getWidth(), getHeight());
 	}
 
-	@Override
-	public int hashCode() {
-		return System.identityHashCode(this);
-	}
-
-	@Override
-	public boolean equals(Object other) {
-		return other == this;
+	public boolean collides(DodgeShape other) {
+		return game.contains(this) && game.contains(other) && shape.intersects(other.shape);
 	}
 }

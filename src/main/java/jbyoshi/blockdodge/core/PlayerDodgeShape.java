@@ -17,8 +17,8 @@ public final class PlayerDodgeShape extends DodgeShape {
 	}
 
 	void reset() {
-		x = game.getWidth() / 2 - width / 2;
-		y = game.getHeight() / 2 - height / 2;
+		setX(game.getWidth() / 2 - getWidth() / 2);
+		setY(game.getHeight() / 2 - getHeight() / 2);
 	}
 
 }

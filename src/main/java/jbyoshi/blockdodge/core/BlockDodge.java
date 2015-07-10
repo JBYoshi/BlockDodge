@@ -67,7 +67,7 @@ public final class BlockDodge extends JPanel {
 					if (!shapes.contains(two) || one == two) {
 						continue;
 					}
-					if (one.intersects(two)) {
+					if (one.collides(two)) {
 						// Drops take care of it themselves.
 						boolean handled = false;
 						if (one instanceof DodgeShape.Drop) {
@@ -101,7 +101,7 @@ public final class BlockDodge extends JPanel {
 			Graphics2D g = buffer.createGraphics();
 			for (DodgeShape shape : shapes) {
 				g.setColor(shape.color);
-				g.fill(shape);
+				g.fill(shape.shape);
 			}
 			g.dispose();
 			this.buffer = buffer;
