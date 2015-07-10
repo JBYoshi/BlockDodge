@@ -13,7 +13,7 @@ public abstract class DodgeShape {
 	private static final float DROP_SCALE = 0.25f;
 	private static final int DROP_COUNT = 10;
 	private int dropCount = 0;
-	final Rectangle2D shape;
+	final Rectangle2D.Double shape;
 
 	public DodgeShape(BlockDodge game, double x, double y, double w, double h, Color c) {
 		this.game = game;
@@ -104,11 +104,11 @@ public abstract class DodgeShape {
 	}
 
 	protected void setX(double x) {
-		shape.setRect(x, getY(), getWidth(), getHeight());
+		shape.x = x;
 	}
 
 	protected void setY(double y) {
-		shape.setRect(getX(), y, getWidth(), getHeight());
+		shape.y = y;
 	}
 
 	public boolean collides(DodgeShape other) {
