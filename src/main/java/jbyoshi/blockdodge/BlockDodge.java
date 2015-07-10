@@ -2,6 +2,7 @@ package jbyoshi.blockdodge;
 
 import java.awt.*;
 import java.awt.geom.*;
+import java.awt.image.*;
 import java.util.*;
 
 import javax.swing.*;
@@ -14,10 +15,16 @@ public final class BlockDodge extends JPanel {
 	private static final int FRAME_TIME = 1000 / 40;
 	private static final int PLAYER_SIZE = 32;
 	private static final Color PLAYER_COLOR = Color.WHITE;
+	private BufferedImage buffer;
 
 	public BlockDodge(int width, int height) {
 		this.width = width;
 		this.height = height;
+		this.buffer = createBuffer();
+	}
+
+	private BufferedImage createBuffer() {
+		return new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 	}
 
 	public void go() {
@@ -48,6 +55,18 @@ public final class BlockDodge extends JPanel {
 				shapes.add(new BadDodgeShape(this, x, y, w, h, c, dir));
 			}
 
+			BufferedImage buffer = createBuffer();
+			Graphics2D g = buffer.createGraphics();
+			g.setColor(PLAYER_COLOR);
+			g.fill(player);
+			for (DodgeShape shape : shapes) {
+				g.setColor(shape.getColor());
+				g.fill(shape);
+			}
+			g.dispose();
+			this.buffer = buffer;
+			repaint();
+
 			timer++;
 			if (deadTimer > 0) {
 				deadTimer--;
@@ -62,6 +81,11 @@ public final class BlockDodge extends JPanel {
 				}
 			}
 		}
+	}
+
+	@Override
+	public void paintComponent(Graphics g) {
+		g.drawImage(buffer, 0, 0, null);
 	}
 
 	@Override
@@ -80,6 +104,13 @@ public final class BlockDodge extends JPanel {
 	}
 
 	public static void main(String[] args) {
-		// TODO
+		JFrame frame = new JFrame("Block Dodge");
+		BlockDodge game = new BlockDodge(800, 600);
+		frame.setContentPane(game);
+		frame.pack();
+		frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+		frame.setVisible(true);
+
+		game.go();
 	}
 }

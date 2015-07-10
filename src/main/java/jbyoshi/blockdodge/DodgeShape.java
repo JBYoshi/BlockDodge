@@ -14,4 +14,8 @@ public abstract class DodgeShape extends Rectangle2D.Double {
 	}
 
 	public abstract void move();
+
+	public Color getColor() {
+		return c;
+	}
 }
