@@ -19,7 +19,7 @@ public class BounceDodgeShape extends DodgeShape {
 			// Moving right
 			if (x + width >= game.getWidth()) {
 				// Hit right wall
-				x = game.getWidth() - x - width + game.getWidth();
+				x = game.getWidth() - x - width + game.getWidth() - width;
 				xMove = -xMove;
 			}
 		} else if (xMove < 0) {
@@ -35,7 +35,7 @@ public class BounceDodgeShape extends DodgeShape {
 			// Moving down
 			if (y + height >= game.getHeight()) {
 				// Hit bottom wall
-				y = game.getHeight() - y - height + game.getHeight();
+				y = game.getHeight() - y - height + game.getHeight() - height;
 				yMove = -yMove;
 			}
 		} else if (yMove < 0) {
