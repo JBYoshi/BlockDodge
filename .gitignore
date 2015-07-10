@@ -1,0 +1,15 @@
+# Maven
+/target/
+/dependency-reduced-pom.xml
+
+# Eclipse
+/.project
+/.classpath
+/.settings/
+
+# NetBeans
+/nbproject/
+
+# System
+.DS_Store
+Thumbs.db
