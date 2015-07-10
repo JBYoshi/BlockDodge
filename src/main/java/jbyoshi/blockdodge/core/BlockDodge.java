@@ -22,6 +22,7 @@ public final class BlockDodge extends JPanel {
 		this.width = width;
 		this.height = height;
 		this.buffer = createBuffer();
+		addKeyListener(player);
 	}
 
 	private BufferedImage createBuffer() {
@@ -108,7 +109,9 @@ public final class BlockDodge extends JPanel {
 			repaint();
 
 			timer++;
-			if (!contains(player) && player.getDropCount() == 0) {
+			if (contains(player)) {
+				requestFocusInWindow();
+			} else if (player.getDropCount() == 0) {
 				return;
 			}
 			long sleep = FRAME_TIME - (System.currentTimeMillis() - start);
