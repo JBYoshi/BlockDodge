@@ -82,6 +82,7 @@ public abstract class DodgeShape {
 	}
 
 	protected void onCollided(DodgeShape other) {
+		explode();
 	}
 
 	void onRemoved() {

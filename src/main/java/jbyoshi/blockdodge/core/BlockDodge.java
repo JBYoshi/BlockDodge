@@ -74,21 +74,8 @@ public final class BlockDodge extends JPanel {
 						continue;
 					}
 					if (one.collides(two)) {
-						// Drops take care of it themselves.
-						boolean handled = false;
-						if (one instanceof DodgeShape.Drop) {
-							one.onCollided(two);
-							handled = true;
-						}
-						if (two instanceof DodgeShape.Drop) {
-							two.onCollided(one);
-							handled = true;
-						}
-
-						if (!handled) {
-							one.onCollided(two);
-							two.onCollided(one);
-						}
+						one.onCollided(two);
+						two.onCollided(one);
 					}
 				}
 			}
@@ -129,7 +116,7 @@ public final class BlockDodge extends JPanel {
 				}
 				float dir = (rand.nextFloat() / 2 + dirChg) % 1;
 				Color c = COLORS[rand.nextInt(COLORS.length)];
-				add(new BadDodgeShape(this, x, y, w, h, c, (float) (dir * 2 * Math.PI)));
+				add(new BounceDodgeShape(this, x, y, w, h, c, (float) (dir * 2 * Math.PI)));
 			}
 
 			BufferedImage buffer = createBuffer();
