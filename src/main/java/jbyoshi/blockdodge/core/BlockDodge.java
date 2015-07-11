@@ -171,6 +171,23 @@ public final class BlockDodge extends JPanel {
 		frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		frame.setVisible(true);
 
+		Box info = Box.createVerticalBox();
+		info.add(Box.createVerticalGlue());
+		info.add(label("Block Dodge", 32));
+		info.add(Box.createVerticalStrut(32));
+		info.add(label("You are the white box in the center of the screen."));
+		info.add(label("Use the arrow keys to move."));
+		info.add(label("Avoid the colored blocks flying at you."));
+		info.add(label("Press Space or Enter to start."));
+		info.add(Box.createVerticalGlue());
+
+		Box infoContainer = Box.createHorizontalBox();
+		infoContainer.add(Box.createHorizontalGlue());
+		infoContainer.add(info);
+		infoContainer.add(Box.createHorizontalGlue());
+		frame.setGlassPane(infoContainer);
+		infoContainer.setVisible(false);
+
 		final AtomicBoolean isPlaying = new AtomicBoolean(false);
 		game.addKeyListener(new KeyAdapter() {
 			@Override
@@ -187,10 +204,27 @@ public final class BlockDodge extends JPanel {
 			}
 		});
 		while (true) {
+			infoContainer.setVisible(true);
+			frame.revalidate();
 			game.go(false);
+			infoContainer.setVisible(false);
+			frame.revalidate();
 			isPlaying.set(true);
 			game.go(true);
 			isPlaying.set(false);
 		}
+	}
+
+	private static JLabel label(String text) {
+		JLabel label = new JLabel(text);
+		label.setForeground(Color.WHITE);
+		label.setAlignmentX(0.5f);
+		return label;
+	}
+
+	private static JLabel label(String text, float size) {
+		JLabel label = label(text);
+		label.setFont(label.getFont().deriveFont(size));
+		return label;
 	}
 }
