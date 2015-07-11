@@ -93,7 +93,7 @@ public final class BlockDodge extends JPanel {
 				}
 			}
 
-			if (timer % 100 == 0) {
+			if (timer % 6 == 0) {
 				int w = rand.nextInt(25) + 8;
 				int h = rand.nextInt(25) + 8;
 				int pos = rand.nextInt(getWidth() + w + getWidth() + w + getHeight() + h + getHeight() + h);
