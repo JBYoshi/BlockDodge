@@ -96,7 +96,7 @@ public final class BlockDodge extends JPanel {
 				float dirChg;
 				if (pos < width + w) {
 					// From top
-					x = pos - w;
+					x = pos - w + 1;
 					y = -h;
 					dirChg = 0.25f;
 				} else {
@@ -117,7 +117,7 @@ public final class BlockDodge extends JPanel {
 							// From right
 							pos -= height + h;
 							x = width;
-							y = pos - h;
+							y = pos - h + 1;
 							dirChg = 0.5f;
 						}
 					}
