@@ -7,6 +7,7 @@ public final class PlayerDodgeShape extends DodgeShape implements KeyListener {
 	private static final Color COLOR = Color.WHITE;
 	private static final int SIZE = 32;
 	private boolean up, down, left, right;
+	private static final double SQRT_HALF = Math.sqrt(0.5);
 
 	public PlayerDodgeShape(BlockDodge game) {
 		super(game, 0, 0, SIZE, SIZE, COLOR);
@@ -14,7 +15,7 @@ public final class PlayerDodgeShape extends DodgeShape implements KeyListener {
 
 	@Override
 	public void move() {
-		double move = left != right && up != down ? 0.5 : 1;
+		double move = left != right && up != down ? SQRT_HALF : 1;
 		if (left && getX() >= move) {
 			setX(getX() - move);
 		}
