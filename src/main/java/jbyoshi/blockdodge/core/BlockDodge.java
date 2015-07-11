@@ -143,11 +143,7 @@ public final class BlockDodge extends JPanel {
 			repaint();
 
 			timer++;
-			if (contains(player)) {
-				requestFocusInWindow();
-			} else if (includePlayer && player.getDropCount() == 0) {
-				return;
-			}
+			requestFocusInWindow();
 			long sleep = FRAME_TIME - (System.currentTimeMillis() - start);
 			if (sleep > 0) {
 				try {
@@ -176,7 +172,7 @@ public final class BlockDodge extends JPanel {
 		frame.setVisible(true);
 
 		final AtomicBoolean isPlaying = new AtomicBoolean(false);
-		frame.addKeyListener(new KeyAdapter() {
+		game.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
 				if (isPlaying.get()) {

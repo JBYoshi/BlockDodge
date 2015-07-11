@@ -34,6 +34,11 @@ public final class PlayerDodgeShape extends DodgeShape implements KeyListener {
 	}
 
 	@Override
+	void onRemoved() {
+		game.stop();
+	}
+
+	@Override
 	public void keyTyped(KeyEvent e) {
 	}
 
