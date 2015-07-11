@@ -28,8 +28,55 @@ public abstract class DodgeShape {
 	}
 
 	void explode0() {
-		for (float i = 0; i < DROP_COUNT; i++) {
-			game.add(new Drop((float) (rand.nextFloat() * 2 * Math.PI)));
+		boolean[][] used = new boolean[(int) shape.getWidth()][(int) shape.getHeight()];
+		int maxArea = (int) ((int) shape.getWidth() * (int) shape.getHeight() * DROP_SCALE);
+		while (true) {
+			int dropX = -1, dropY = -1;
+			findPos: for (int x = 0; x < used.length; x++) {
+				for (int y = 0; y < used[x].length; y++) {
+					if (!used[x][y]) {
+						dropX = x;
+						dropY = y;
+						break findPos;
+					}
+				}
+			}
+			if (dropX == -1 || dropY == -1) {
+				break;
+			}
+			int dropX2 = dropX, dropY2 = dropY;
+			while ((dropX2 - dropX) * (dropY2 - dropY) < maxArea) {
+				if (rand.nextBoolean()) {
+					// Expand the width
+					if (used.length == dropX2 + 1) {
+						break;
+					}
+					for (int y = dropY; y <= dropY2; y++) {
+						if (used[dropX2][y]) {
+							break;
+						}
+					}
+					dropX2++;
+				} else {
+					// Expand the height
+					if (used[0].length == dropY2 + 1) {
+						break;
+					}
+					for (int x = dropX; x <= dropX2; x++) {
+						if (used[x][dropY2]) {
+							break;
+						}
+					}
+					dropY2++;
+				}
+			}
+			for (int x = dropX; x <= dropX2; x++) {
+				for (int y = dropY; y <= dropY2; y++) {
+					used[x][y] = true;
+				}
+			}
+			float dir = (float) (rand.nextFloat() * 2 * Math.PI);
+			game.add(new Drop(dropX, dropY, dropX2, dropY2, dir));
 		}
 		game.remove(this);
 	}
@@ -43,10 +90,9 @@ public abstract class DodgeShape {
 	protected final class Drop extends BounceDodgeShape {
 		private int time = 100;
 
-		protected Drop(float dir) {
-			super(DodgeShape.this.game, DodgeShape.this.getX(), DodgeShape.this.getY(),
-					DodgeShape.this.getWidth() * DROP_SCALE, DodgeShape.this.getHeight() * DROP_SCALE,
-					DodgeShape.this.color, dir);
+		protected Drop(int x1, int y1, int x2, int y2, float dir) {
+			super(DodgeShape.this.game, DodgeShape.this.getX() + x1, DodgeShape.this.getY() + y1, x2 - x1 + 1,
+					y2 - y1 + 1, DodgeShape.this.color, dir);
 			DodgeShape.this.dropCount++;
 		}
 
