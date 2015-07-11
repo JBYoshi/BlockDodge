@@ -124,7 +124,7 @@ public abstract class DodgeShape {
 
 		@Override
 		void onRemoved() {
-			if (DodgeShape.this.dropCount-- == 0) {
+			if (--DodgeShape.this.dropCount == 0) {
 				DodgeShape.this.onRemoved();
 			}
 		}
