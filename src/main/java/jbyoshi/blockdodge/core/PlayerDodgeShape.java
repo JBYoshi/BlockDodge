@@ -14,17 +14,18 @@ public final class PlayerDodgeShape extends DodgeShape implements KeyListener {
 
 	@Override
 	public void move() {
-		if (left && getX() > 0) {
-			setX(getX() - 1);
+		double move = left != right && up != down ? 0.5 : 1;
+		if (left && getX() >= move) {
+			setX(getX() - move);
 		}
-		if (right && getX() < game.getWidth() - getWidth() - 1) {
-			setX(getX() + 1);
+		if (right && getX() < game.getWidth() - getWidth() - move) {
+			setX(getX() + move);
 		}
-		if (up && getY() > 0) {
-			setY(getY() - 1);
+		if (up && getY() >= move) {
+			setY(getY() - move);
 		}
-		if (down && getY() < game.getHeight() - getHeight() - 1) {
-			setY(getY() + 1);
+		if (down && getY() < game.getHeight() - getHeight() - move) {
+			setY(getY() + move);
 		}
 	}
 
