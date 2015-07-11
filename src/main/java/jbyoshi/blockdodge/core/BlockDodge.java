@@ -1,8 +1,10 @@
 package jbyoshi.blockdodge.core;
 
 import java.awt.*;
+import java.awt.event.*;
 import java.awt.image.*;
 import java.util.*;
+import java.util.concurrent.atomic.*;
 
 import javax.swing.*;
 
@@ -17,6 +19,7 @@ public final class BlockDodge extends JPanel {
 	private BufferedImage buffer;
 	private final Set<DodgeShape> shapes = new HashSet<DodgeShape>();
 	private final PlayerDodgeShape player = new PlayerDodgeShape(this);
+	private final AtomicBoolean stop = new AtomicBoolean(false);
 
 	public BlockDodge(int width, int height) {
 		this.width = width;
@@ -48,13 +51,16 @@ public final class BlockDodge extends JPanel {
 		return player;
 	}
 
-	public void go() {
-		player.reset();
+	public void go(boolean includePlayer) {
 		shapes.clear();
-		shapes.add(player);
+		if (includePlayer) {
+			player.reset();
+			shapes.add(player);
+		}
 		int timer = 0;
 
-		while (true) {
+		stop.set(false);
+		while (!stop.get()) {
 			long start = System.currentTimeMillis();
 
 			for (DodgeShape shape : new HashSet<DodgeShape>(shapes)) {
@@ -140,7 +146,7 @@ public final class BlockDodge extends JPanel {
 			timer++;
 			if (contains(player)) {
 				requestFocusInWindow();
-			} else if (player.getDropCount() == 0) {
+			} else if (includePlayer && player.getDropCount() == 0) {
 				return;
 			}
 			long sleep = FRAME_TIME - (System.currentTimeMillis() - start);
@@ -151,6 +157,10 @@ public final class BlockDodge extends JPanel {
 				}
 			}
 		}
+	}
+
+	public void stop() {
+		stop.set(true);
 	}
 
 	@Override
@@ -175,12 +185,32 @@ public final class BlockDodge extends JPanel {
 
 	public static void main(String[] args) {
 		JFrame frame = new JFrame("Block Dodge");
-		BlockDodge game = new BlockDodge(800, 600);
+		final BlockDodge game = new BlockDodge(800, 600);
 		frame.setContentPane(game);
 		frame.pack();
 		frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		frame.setVisible(true);
 
-		game.go();
+		final AtomicBoolean isPlaying = new AtomicBoolean(false);
+		frame.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if (isPlaying.get()) {
+					return;
+				}
+				switch (e.getKeyCode()) {
+				case KeyEvent.VK_ENTER:
+				case KeyEvent.VK_SPACE:
+					game.stop();
+					break;
+				}
+			}
+		});
+		while (true) {
+			game.go(false);
+			isPlaying.set(true);
+			game.go(true);
+			isPlaying.set(false);
+		}
 	}
 }
