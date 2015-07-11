@@ -88,12 +88,13 @@ public abstract class DodgeShape {
 	}
 
 	protected final class Drop extends BounceDodgeShape {
-		private int time = 100;
+		private int time;
 
 		protected Drop(int x1, int y1, int x2, int y2, float dir) {
 			super(DodgeShape.this.game, DodgeShape.this.getX() + x1, DodgeShape.this.getY() + y1, x2 - x1 + 1,
 					y2 - y1 + 1, DodgeShape.this.color, dir);
 			DodgeShape.this.dropCount++;
+			time = rand.nextInt(50) + 75;
 		}
 
 		@Override
