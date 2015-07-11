@@ -19,6 +19,7 @@ public final class BlockDodge extends JPanel {
 	private final Set<DodgeShape> shapes = new HashSet<DodgeShape>();
 	private final PlayerDodgeShape player = new PlayerDodgeShape(this);
 	private final AtomicBoolean stop = new AtomicBoolean(false);
+	private volatile double score;
 
 	public BlockDodge() {
 		this.buffer = createBuffer();
@@ -53,6 +54,7 @@ public final class BlockDodge extends JPanel {
 			shapes.clear();
 			player.reset();
 			shapes.add(player);
+			score = 0;
 		} else {
 			shapes.remove(player);
 		}
@@ -119,12 +121,19 @@ public final class BlockDodge extends JPanel {
 				add(new BounceDodgeShape(this, x, y, w, h, c, (float) (dir * 2 * Math.PI)));
 			}
 
+			if (contains(player)) {
+				score++; // TODO base on screen size
+			}
+
 			BufferedImage buffer = createBuffer();
 			Graphics2D g = buffer.createGraphics();
 			for (DodgeShape shape : shapes) {
 				g.setColor(shape.color);
 				g.fill(shape.shape);
 			}
+			g.setColor(Color.WHITE);
+			g.setFont(g.getFont().deriveFont(20.0f));
+			g.drawString("Score: " + (int) score, 50, 50);
 			g.dispose();
 			this.buffer = buffer;
 			repaint();
@@ -191,6 +200,7 @@ public final class BlockDodge extends JPanel {
 			}
 		});
 		while (true) {
+
 			infoContainer.setVisible(true);
 			frame.revalidate();
 			game.go(false);
