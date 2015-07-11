@@ -11,7 +11,6 @@ import javax.swing.*;
 import jbyoshi.blockdodge.*;
 
 public final class BlockDodge extends JPanel {
-	private final int width, height;
 	final Random rand = new Random();
 	private static final Color[] COLORS = new Color[] { Color.BLUE, Color.CYAN, Color.GREEN, Color.MAGENTA,
 			new Color(255, 127, 0), new Color(0, 140, 0), Color.RED, Color.YELLOW };
@@ -21,15 +20,13 @@ public final class BlockDodge extends JPanel {
 	private final PlayerDodgeShape player = new PlayerDodgeShape(this);
 	private final AtomicBoolean stop = new AtomicBoolean(false);
 
-	public BlockDodge(int width, int height) {
-		this.width = width;
-		this.height = height;
+	public BlockDodge() {
 		this.buffer = createBuffer();
 		addKeyListener(player);
 	}
 
 	private BufferedImage createBuffer() {
-		return new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+		return new BufferedImage(Math.max(1, getWidth()), Math.max(1, getHeight()), BufferedImage.TYPE_INT_RGB);
 	}
 
 	public void add(DodgeShape shape) {
@@ -52,10 +49,12 @@ public final class BlockDodge extends JPanel {
 	}
 
 	public void go(boolean includePlayer) {
-		shapes.clear();
 		if (includePlayer) {
+			shapes.clear();
 			player.reset();
 			shapes.add(player);
+		} else {
+			shapes.remove(player);
 		}
 		int timer = 0;
 
@@ -97,32 +96,32 @@ public final class BlockDodge extends JPanel {
 			if (timer % 100 == 0) {
 				int w = rand.nextInt(25) + 8;
 				int h = rand.nextInt(25) + 8;
-				int pos = rand.nextInt(width + w + width + w + height + h + height + h);
+				int pos = rand.nextInt(getWidth() + w + getWidth() + w + getHeight() + h + getHeight() + h);
 				int x, y;
 				float dirChg;
-				if (pos < width + w) {
+				if (pos < getWidth() + w) {
 					// From top
 					x = pos - w + 1;
 					y = -h;
 					dirChg = 0.25f;
 				} else {
-					pos -= width + w;
-					if (pos < width + w) {
+					pos -= getWidth() + w;
+					if (pos < getWidth() + w) {
 						// From bottom
 						x = pos - w;
-						y = height;
+						y = getHeight();
 						dirChg = 0.75f;
 					} else {
-						pos -= width + w;
-						if (pos < height + h) {
+						pos -= getWidth() + w;
+						if (pos < getHeight() + h) {
 							// From left
 							x = -w;
 							y = pos - h;
 							dirChg = 0;
 						} else {
 							// From right
-							pos -= height + h;
-							x = width;
+							pos -= getHeight() + h;
+							x = getWidth();
 							y = pos - h + 1;
 							dirChg = 0.5f;
 						}
@@ -168,24 +167,9 @@ public final class BlockDodge extends JPanel {
 		g.drawImage(buffer, 0, 0, null);
 	}
 
-	@Override
-	public Dimension getPreferredSize() {
-		return new Dimension(width, height);
-	}
-
-	@Override
-	public Dimension getMinimumSize() {
-		return new Dimension(width, height);
-	}
-
-	@Override
-	public Dimension getMaximumSize() {
-		return new Dimension(width, height);
-	}
-
 	public static void main(String[] args) {
 		JFrame frame = new JFrame("Block Dodge");
-		final BlockDodge game = new BlockDodge(800, 600);
+		final BlockDodge game = new BlockDodge();
 		frame.setContentPane(game);
 		frame.pack();
 		frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
