@@ -12,7 +12,7 @@ public final class BlockDodge extends JPanel {
 	private final int width, height;
 	final Random rand = new Random();
 	private static final Color[] COLORS = new Color[] { Color.BLUE, Color.CYAN, Color.GREEN, Color.MAGENTA,
-			Color.ORANGE, Color.PINK, Color.RED, Color.YELLOW };
+			new Color(255, 127, 0), new Color(0, 140, 0), Color.RED, Color.YELLOW };
 	private static final int FRAME_TIME = 1000 / 75;
 	private BufferedImage buffer;
 	private final Set<DodgeShape> shapes = new HashSet<DodgeShape>();
