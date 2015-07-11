@@ -91,11 +91,40 @@ public final class BlockDodge extends JPanel {
 			if (timer % 100 == 0) {
 				int w = rand.nextInt(25) + 8;
 				int h = rand.nextInt(25) + 8;
-				int x = 0; // TODO
-				int y = 0; // TODO
-				float dir = (float) (rand.nextFloat() * Math.PI);
+				int pos = rand.nextInt(width + w + width + w + height + h + height + h);
+				int x, y;
+				float dirChg;
+				if (pos < width + w) {
+					// From top
+					x = pos - w;
+					y = -h;
+					dirChg = 0.25f;
+				} else {
+					pos -= width + w;
+					if (pos < width + w) {
+						// From bottom
+						x = pos - w;
+						y = height;
+						dirChg = 0.75f;
+					} else {
+						pos -= width + w;
+						if (pos < height + h) {
+							// From left
+							x = -w;
+							y = pos - h;
+							dirChg = 0;
+						} else {
+							// From right
+							pos -= height + h;
+							x = width;
+							y = pos - h;
+							dirChg = 0.5f;
+						}
+					}
+				}
+				float dir = (rand.nextFloat() / 2 + dirChg) % 1;
 				Color c = COLORS[rand.nextInt(COLORS.length)];
-				add(new BadDodgeShape(this, x, y, w, h, c, dir));
+				add(new BadDodgeShape(this, x, y, w, h, c, (float) (dir * 2 * Math.PI)));
 			}
 
 			BufferedImage buffer = createBuffer();
