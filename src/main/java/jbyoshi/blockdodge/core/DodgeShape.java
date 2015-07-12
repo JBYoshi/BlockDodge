@@ -89,20 +89,34 @@ public abstract class DodgeShape {
 	}
 
 	protected final class Drop extends BounceDodgeShape {
-		private int time;
+		private int time = 0;
 
 		protected Drop(int x1, int y1, int x2, int y2, float dir) {
 			super(DodgeShape.this.game, DodgeShape.this.getX() + x1, DodgeShape.this.getY() + y1, x2 - x1 + 1,
 					y2 - y1 + 1, DodgeShape.this.color, dir);
 			DodgeShape.this.dropCount++;
-			time = rand.nextInt(50) + 75;
 		}
 
 		@Override
 		public void move() {
 			super.move();
-			if (time-- == 0) {
-				game.remove(this);
+			if (++time % 7 == 0) {
+				if (getWidth() == 0 && getHeight() == 0) {
+					game.remove(this);
+					return;
+				}
+				int change = rand.nextInt((int) (getWidth() + getHeight()));
+				if (change < getWidth()) {
+					if (rand.nextBoolean()) {
+						setX(getX() + 1);
+					}
+					setWidth(this, getWidth() - 1);
+				} else {
+					if (rand.nextBoolean()) {
+						setY(getY() + 1);
+					}
+					setHeight(this, getHeight() - 1);
+				}
 			}
 		}
 
@@ -161,5 +175,15 @@ public abstract class DodgeShape {
 
 	public boolean collides(DodgeShape other) {
 		return game.contains(this) && game.contains(other) && shape.intersects(other.shape);
+	}
+
+	// To get around compiler insanity. Used by Drop.
+
+	static void setWidth(DodgeShape shape, double width) {
+		shape.shape.width = width;
+	}
+
+	static void setHeight(DodgeShape shape, double height) {
+		shape.shape.height = height;
 	}
 }
