@@ -164,7 +164,7 @@ public final class BlockDodge extends JPanel {
 		frame.enableInputMethods(false);
 		final BlockDodge game = new BlockDodge();
 		frame.setContentPane(game);
-		frame.pack();
+		frame.setSize(800, 600);
 		frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		frame.setVisible(true);
 
