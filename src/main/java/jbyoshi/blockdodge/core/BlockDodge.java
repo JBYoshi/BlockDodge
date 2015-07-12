@@ -118,7 +118,7 @@ public final class BlockDodge extends JPanel {
 				}
 				float dir = (rand.nextFloat() / 2 + dirChg) % 1;
 				Color c = COLORS[rand.nextInt(COLORS.length)];
-				add(new BounceDodgeShape(this, x, y, w, h, c, (float) (dir * 2 * Math.PI)));
+				add(new BounceDodgeShape(this, x, y, w, h, c, (float) (dir * 2 * Math.PI), score / 2500 + 1));
 			}
 
 			if (contains(player)) {
@@ -200,7 +200,6 @@ public final class BlockDodge extends JPanel {
 			}
 		});
 		while (true) {
-
 			infoContainer.setVisible(true);
 			frame.revalidate();
 			game.go(false);

@@ -76,7 +76,7 @@ public abstract class DodgeShape {
 				}
 			}
 			float dir = (float) (rand.nextFloat() * 2 * Math.PI);
-			game.add(new Drop(dropX, dropY, dropX2, dropY2, dir));
+			game.add(new Drop(dropX, dropY, dropX2, dropY2, dir, 1));
 		}
 		game.remove(this);
 	}
@@ -91,9 +91,9 @@ public abstract class DodgeShape {
 	protected final class Drop extends BounceDodgeShape {
 		private int time = 0;
 
-		protected Drop(int x1, int y1, int x2, int y2, float dir) {
+		protected Drop(int x1, int y1, int x2, int y2, float dir, double speed) {
 			super(DodgeShape.this.game, DodgeShape.this.getX() + x1, DodgeShape.this.getY() + y1, x2 - x1 + 1,
-					y2 - y1 + 1, DodgeShape.this.color, dir);
+					y2 - y1 + 1, DodgeShape.this.color, dir, speed);
 			DodgeShape.this.dropCount++;
 		}
 

@@ -7,10 +7,10 @@ import jbyoshi.blockdodge.core.*;
 public class BounceDodgeShape extends DodgeShape {
 	private double xMove, yMove;
 
-	public BounceDodgeShape(BlockDodge game, double x, double y, double w, double h, Color c, float dir) {
+	public BounceDodgeShape(BlockDodge game, double x, double y, double w, double h, Color c, float dir, double speed) {
 		super(game, x, y, w, h, c);
-		this.xMove = Math.sin(dir);
-		this.yMove = -Math.cos(dir);
+		this.xMove = Math.sin(dir) * speed;
+		this.yMove = -Math.cos(dir) * speed;
 	}
 
 	@Override
