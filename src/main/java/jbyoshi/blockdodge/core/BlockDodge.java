@@ -161,6 +161,7 @@ public final class BlockDodge extends JPanel {
 
 	public static void main(String[] args) {
 		JFrame frame = new JFrame("Block Dodge");
+		frame.enableInputMethods(false);
 		final BlockDodge game = new BlockDodge();
 		frame.setContentPane(game);
 		frame.pack();
@@ -196,6 +197,19 @@ public final class BlockDodge extends JPanel {
 				case KeyEvent.VK_SPACE:
 					game.stop();
 					break;
+				case KeyEvent.VK_F11:
+					GraphicsDevice device = frame.getGraphicsConfiguration().getDevice();
+					if (device.isFullScreenSupported() && device.getFullScreenWindow() != frame) {
+						frame.dispose();
+						frame.setUndecorated(true);
+						device.setFullScreenWindow(frame);
+					} else {
+						frame.dispose();
+						device.setFullScreenWindow(null);
+						frame.setUndecorated(false);
+						frame.setVisible(true);
+					}
+					frame.revalidate();
 				}
 			}
 		});
