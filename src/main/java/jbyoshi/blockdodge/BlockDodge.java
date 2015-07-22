@@ -33,6 +33,7 @@ public final class BlockDodge extends JPanel {
 	private final PlayerDodgeShape player = new PlayerDodgeShape(this);
 	private final AtomicBoolean stop = new AtomicBoolean(false);
 	private volatile double score;
+	private static final String COPYRIGHT_TEXT = "Copyright 2015 JBYoshi        github.com/JBYoshi/BlockDodge";
 
 	public BlockDodge() {
 		this.buffer = createBuffer();
@@ -147,6 +148,12 @@ public final class BlockDodge extends JPanel {
 			g.setColor(Color.WHITE);
 			g.setFont(g.getFont().deriveFont(20.0f));
 			g.drawString("Score: " + (int) score, 50, 50);
+			if (!includePlayer) {
+				g.setFont(g.getFont().deriveFont(10.0f));
+				int textWidth = g.getFontMetrics().stringWidth(COPYRIGHT_TEXT);
+				int textHeight = g.getFontMetrics().getHeight();
+				g.drawString(COPYRIGHT_TEXT, getWidth() / 2 - textWidth / 2, getHeight() - 10 - textHeight);
+			}
 			g.dispose();
 			this.buffer = buffer;
 			repaint();
