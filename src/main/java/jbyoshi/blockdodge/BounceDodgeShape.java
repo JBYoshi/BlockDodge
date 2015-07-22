@@ -17,8 +17,6 @@ package jbyoshi.blockdodge;
 
 import java.awt.*;
 
-import jbyoshi.blockdodge.core.*;
-
 public class BounceDodgeShape extends DodgeShape {
 	private double xMove, yMove;
 
