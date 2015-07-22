@@ -33,7 +33,6 @@ public final class BlockDodge extends JPanel {
 	private final PlayerDodgeShape player = new PlayerDodgeShape(this);
 	private final AtomicBoolean stop = new AtomicBoolean(false);
 	private volatile double score;
-	private volatile int ticks;
 	private static final String COPYRIGHT_TEXT = "Copyright 2015 JBYoshi        github.com/JBYoshi/BlockDodge";
 
 	public BlockDodge() {
@@ -70,7 +69,6 @@ public final class BlockDodge extends JPanel {
 			player.reset();
 			shapes.add(player);
 			score = 0;
-			ticks = 0;
 		} else {
 			shapes.remove(player);
 		}
@@ -134,12 +132,11 @@ public final class BlockDodge extends JPanel {
 				}
 				float dir = (rand.nextFloat() / 2 + dirChg) % 1;
 				Color c = COLORS[rand.nextInt(COLORS.length)];
-				add(new BounceDodgeShape(this, x, y, w, h, c, (float) (dir * 2 * Math.PI), ticks / 2500.0 + 1.0));
+				add(new BounceDodgeShape(this, x, y, w, h, c, (float) (dir * 2 * Math.PI), score / 2500 + 1));
 			}
 
 			if (contains(player)) {
 				score++; // TODO base on screen size
-				ticks++;
 			}
 
 			BufferedImage buffer = createBuffer();
