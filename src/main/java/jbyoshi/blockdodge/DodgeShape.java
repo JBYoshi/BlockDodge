@@ -19,14 +19,11 @@ import java.awt.*;
 import java.awt.geom.*;
 import java.util.*;
 
-import jbyoshi.blockdodge.*;
-
 public abstract class DodgeShape {
 	protected final BlockDodge game;
 	protected final Random rand = new Random();
 	final Color color;
 	private static final float DROP_SCALE = 0.25f;
-	private static final int DROP_COUNT = 10;
 	private int dropCount = 0;
 	final Rectangle2D.Double shape;
 
@@ -38,11 +35,7 @@ public abstract class DodgeShape {
 
 	protected abstract void move();
 
-	public final void explode() {
-		explode0();
-	}
-
-	void explode0() {
+	public void explode() {
 		boolean[][] used = new boolean[(int) shape.getWidth()][(int) shape.getHeight()];
 		int maxArea = (int) ((int) shape.getWidth() * (int) shape.getHeight() * DROP_SCALE);
 		while (true) {
@@ -136,7 +129,7 @@ public abstract class DodgeShape {
 		}
 
 		@Override
-		void explode0() {
+		public void explode() {
 			game.remove(this);
 		}
 

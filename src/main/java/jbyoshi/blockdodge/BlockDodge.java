@@ -23,8 +23,6 @@ import java.util.concurrent.atomic.*;
 
 import javax.swing.*;
 
-import jbyoshi.blockdodge.*;
-
 public final class BlockDodge extends JPanel {
 	final Random rand = new Random();
 	private static final Color[] COLORS = new Color[] { Color.BLUE, Color.CYAN, Color.GREEN, Color.MAGENTA,
