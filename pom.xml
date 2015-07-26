@@ -20,7 +20,7 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass>jbyoshi.blockdodge.core.BlockDodge</mainClass>
+							<mainClass>jbyoshi.blockdodge.BlockDodge</mainClass>
 						</manifest>
 					</archive>
 				</configuration>
