@@ -25,8 +25,6 @@ import javax.swing.*;
 
 public final class BlockDodge extends JPanel {
 	final Random rand = new Random();
-	private static final Color[] COLORS = new Color[] { Color.BLUE, Color.CYAN, Color.GREEN, Color.MAGENTA,
-			new Color(255, 127, 0), new Color(0, 140, 0), Color.RED, Color.YELLOW };
 	private static final int FRAME_TIME = 1000 / 75;
 	private volatile BufferedImage buffer;
 	private final Set<DodgeShape> shapes = new HashSet<DodgeShape>();
@@ -34,6 +32,8 @@ public final class BlockDodge extends JPanel {
 	private final AtomicBoolean stop = new AtomicBoolean(false);
 	private volatile double score;
 	private static final String COPYRIGHT_TEXT = "Copyright 2015 JBYoshi        github.com/JBYoshi/BlockDodge";
+	private static final RandomChooser<Color> COLORS = new RandomChooser<>(Color.BLUE, Color.CYAN, Color.GREEN, Color.MAGENTA,
+			new Color(255, 127, 0), new Color(0, 140, 0), Color.RED, Color.YELLOW);
 
 	public BlockDodge() {
 		this.buffer = createBuffer();
@@ -131,7 +131,7 @@ public final class BlockDodge extends JPanel {
 					}
 				}
 				float dir = (rand.nextFloat() / 2 + dirChg) % 1;
-				Color c = COLORS[rand.nextInt(COLORS.length)];
+				Color c = COLORS.next();
 				add(new BounceDodgeShape(this, x, y, w, h, c, (float) (dir * 2 * Math.PI), score / 2500 + 1));
 			}
 
