@@ -108,7 +108,7 @@ public abstract class DodgeShape {
 		@Override
 		public void move() {
 			super.move();
-			if (++time % 7 == 0) {
+			if (++time % 5 == 0) {
 				if (getWidth() == 0 && getHeight() == 0) {
 					game.remove(this);
 					return;
@@ -126,11 +126,6 @@ public abstract class DodgeShape {
 					setHeight(this, getHeight() - 1);
 				}
 			}
-		}
-
-		@Override
-		public void explode() {
-			game.remove(this);
 		}
 
 		@Override
