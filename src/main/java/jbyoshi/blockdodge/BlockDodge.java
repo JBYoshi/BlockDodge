@@ -132,7 +132,8 @@ public final class BlockDodge extends JPanel {
 				}
 				float dir = (rand.nextFloat() / 2 + dirChg) % 1;
 				Color c = COLORS.next();
-				add(new BounceDodgeShape(this, x, y, w, h, c, (float) (dir * 2 * Math.PI), score / 2500.0 + 1));
+				add(new BounceDodgeShape(this, x, y, w, h, c, (float) (dir * 2 * Math.PI),
+						includePlayer ? timer / 2500.0 + 1 : 1.5));
 			}
 
 			if (contains(player)) {
