@@ -137,7 +137,7 @@ public final class BlockDodge extends JPanel {
 			}
 
 			if (contains(player)) {
-				score++; // TODO base on screen size
+				score += 500000.0 / getWidth() / getHeight();
 			}
 
 			BufferedImage buffer = createBuffer();
