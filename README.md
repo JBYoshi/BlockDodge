@@ -1,8 +1,6 @@
 # BlockDodge
 A simple game where you try to dodge blocks.
 
-#### [Downloads](https://github.com/JBYoshi/BlockDodge/releases)
+#### [Documentation](https://jbyoshi.github.com/blockdodge)
 
-# Requirements
-- Java 8
-- Maven
+#### [Downloads](https://github.com/JBYoshi/BlockDodge/releases)
