@@ -24,6 +24,7 @@ import java.util.concurrent.atomic.*;
 import javax.swing.*;
 
 public final class BlockDodge extends JPanel {
+	private static final long serialVersionUID = 6904399199721821562L;
 	final Random rand = new Random();
 	private static final int FRAME_TIME = 1000 / 75;
 	private volatile BufferedImage buffer;
