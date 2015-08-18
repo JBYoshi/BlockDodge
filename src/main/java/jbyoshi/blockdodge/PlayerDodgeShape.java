@@ -21,7 +21,7 @@ import java.awt.event.*;
 public final class PlayerDodgeShape extends DodgeShape implements KeyListener {
 	private static final Color COLOR = Color.WHITE;
 	private static final int SIZE = 32;
-	private boolean up, down, left, right, quit;
+	private boolean up, down, left, right, quit, pause;
 	private static final double SQRT_HALF = Math.sqrt(0.5);
 
 	public PlayerDodgeShape(BlockDodge game) {
@@ -30,6 +30,12 @@ public final class PlayerDodgeShape extends DodgeShape implements KeyListener {
 
 	@Override
 	public void move() {
+		while (pause) {
+			try {
+				Thread.sleep(10);
+			} catch (InterruptedException e) {
+			}
+		}
 		if (quit) {
 			explode();
 			return;
@@ -50,6 +56,7 @@ public final class PlayerDodgeShape extends DodgeShape implements KeyListener {
 	}
 
 	void reset() {
+		pause = false;
 		quit = false;
 		setX(game.getWidth() / 2 - getWidth() / 2);
 		setY(game.getHeight() / 2 - getHeight() / 2);
@@ -79,8 +86,17 @@ public final class PlayerDodgeShape extends DodgeShape implements KeyListener {
 		case KeyEvent.VK_RIGHT:
 			right = true;
 			break;
+		case KeyEvent.VK_SPACE:
+		case KeyEvent.VK_ENTER:
+			if (pause) {
+				pause = false;
+				quit = true;
+				game.pauseScreen.setVisible(false);
+			}
+			break;
 		case KeyEvent.VK_ESCAPE:
-			quit = true;
+			pause = !pause;
+			game.pauseScreen.setVisible(pause);
 			break;
 		}
 	}
@@ -101,6 +117,10 @@ public final class PlayerDodgeShape extends DodgeShape implements KeyListener {
 			right = false;
 			break;
 		}
+	}
+
+	boolean isPaused() {
+		return pause;
 	}
 
 }

@@ -26,6 +26,7 @@ import javax.swing.*;
 public final class BlockDodge extends JPanel {
 	private static final long serialVersionUID = 6904399199721821562L;
 	final Random rand = new Random();
+	final JComponent pauseScreen = Box.createVerticalBox();
 	private static final int FRAME_TIME = 1000 / 75;
 	private volatile BufferedImage buffer;
 	private final Set<DodgeShape> shapes = new HashSet<DodgeShape>();
@@ -39,6 +40,15 @@ public final class BlockDodge extends JPanel {
 	public BlockDodge() {
 		this.buffer = createBuffer();
 		addKeyListener(player);
+		setLayout(new BorderLayout());
+		pauseScreen.setVisible(false);
+		add(pauseScreen);
+		pauseScreen.add(Box.createVerticalGlue());
+		pauseScreen.add(label("Paused"));
+		pauseScreen.add(Box.createVerticalStrut(32));
+		pauseScreen.add(label("Press Escape to continue."));
+		pauseScreen.add(label("Press Space or Enter to exit."));
+		pauseScreen.add(Box.createVerticalGlue());
 	}
 
 	private BufferedImage createBuffer() {
