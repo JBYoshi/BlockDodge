@@ -50,6 +50,7 @@ public final class PlayerDodgeShape extends DodgeShape implements KeyListener {
 	}
 
 	void reset() {
+		quit = false;
 		setX(game.getWidth() / 2 - getWidth() / 2);
 		setY(game.getHeight() / 2 - getHeight() / 2);
 	}
