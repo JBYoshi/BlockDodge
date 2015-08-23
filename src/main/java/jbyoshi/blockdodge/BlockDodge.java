@@ -208,7 +208,7 @@ public final class BlockDodge extends JPanel {
 		info.add(label("Use the arrow keys to move."));
 		info.add(label("Avoid the colored blocks flying at you."));
 		info.add(label("Press Space or Enter to start."));
-		info.add(label("You can press Escape to quit."));
+		info.add(label("You can press Escape to pause or quit."));
 		info.add(Box.createVerticalGlue());
 
 		Box infoContainer = Box.createHorizontalBox();
