@@ -39,7 +39,10 @@ public final class BlockDodge extends JPanel {
 
 	public BlockDodge() {
 		this.buffer = createBuffer();
+
 		addKeyListener(player);
+		addFocusListener(player);
+
 		setLayout(new BorderLayout());
 		pauseScreen.setVisible(false);
 		add(pauseScreen);

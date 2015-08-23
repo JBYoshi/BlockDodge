@@ -18,10 +18,10 @@ package jbyoshi.blockdodge;
 import java.awt.*;
 import java.awt.event.*;
 
-public final class PlayerDodgeShape extends DodgeShape implements KeyListener {
+public final class PlayerDodgeShape extends DodgeShape implements KeyListener, FocusListener {
 	private static final Color COLOR = Color.WHITE;
 	private static final int SIZE = 32;
-	private boolean up, down, left, right, quit, pause;
+	private volatile boolean up, down, left, right, quit, pause;
 	private static final double SQRT_HALF = Math.sqrt(0.5);
 
 	public PlayerDodgeShape(BlockDodge game) {
@@ -89,14 +89,14 @@ public final class PlayerDodgeShape extends DodgeShape implements KeyListener {
 		case KeyEvent.VK_SPACE:
 		case KeyEvent.VK_ENTER:
 			if (pause) {
-				pause = false;
-				quit = true;
-				game.pauseScreen.setVisible(false);
+				synchronized (this) {
+					quit = true;
+					setPaused(false);
+				}
 			}
 			break;
 		case KeyEvent.VK_ESCAPE:
-			pause = !pause;
-			game.pauseScreen.setVisible(pause);
+			setPaused(!pause);
 			break;
 		}
 	}
@@ -119,8 +119,18 @@ public final class PlayerDodgeShape extends DodgeShape implements KeyListener {
 		}
 	}
 
-	boolean isPaused() {
-		return pause;
+	private synchronized void setPaused(boolean paused) {
+		pause = paused;
+		game.pauseScreen.setVisible(paused);
+	}
+
+	@Override
+	public void focusGained(FocusEvent e) {
+	}
+
+	@Override
+	public void focusLost(FocusEvent e) {
+		setPaused(true);
 	}
 
 }
