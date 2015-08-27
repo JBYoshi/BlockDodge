@@ -49,8 +49,8 @@ public final class BlockDodge extends JPanel {
 		pauseScreen.add(Box.createVerticalGlue());
 		pauseScreen.add(label("Paused"));
 		pauseScreen.add(Box.createVerticalStrut(32));
-		pauseScreen.add(label("Press Escape to continue."));
-		pauseScreen.add(label("Press Space or Enter to exit."));
+		pauseScreen.add(label("Press Escape, Space or Enter to continue."));
+		pauseScreen.add(label("Press Delete to exit."));
 		pauseScreen.add(Box.createVerticalGlue());
 	}
 
@@ -211,7 +211,7 @@ public final class BlockDodge extends JPanel {
 		info.add(label("Use the arrow keys to move."));
 		info.add(label("Avoid the colored blocks flying at you."));
 		info.add(label("Press Space or Enter to start."));
-		info.add(label("You can press Escape to pause or quit."));
+		info.add(label("You can press Escape to pause and Delete to quit."));
 		info.add(Box.createVerticalGlue());
 
 		Box infoContainer = Box.createHorizontalBox();

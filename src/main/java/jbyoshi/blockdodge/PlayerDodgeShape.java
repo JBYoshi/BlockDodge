@@ -88,16 +88,17 @@ public final class PlayerDodgeShape extends DodgeShape implements KeyListener, F
 			break;
 		case KeyEvent.VK_SPACE:
 		case KeyEvent.VK_ENTER:
-			if (pause) {
-				synchronized (this) {
-					quit = true;
-					setPaused(false);
-				}
-			}
+			setPaused(false);
 			break;
 		case KeyEvent.VK_ESCAPE:
 			setPaused(!pause);
 			break;
+		case KeyEvent.VK_DELETE:
+			synchronized (this) {
+				quit = true;
+				setPaused(false);
+				break;
+			}
 		}
 	}
 
