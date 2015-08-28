@@ -121,6 +121,9 @@ public final class PlayerDodgeShape extends DodgeShape implements KeyListener, F
 	}
 
 	private synchronized void setPaused(boolean paused) {
+		if (!game.contains(this)) {
+			paused = false;
+		}
 		pause = paused;
 		game.pauseScreen.setVisible(paused);
 	}
