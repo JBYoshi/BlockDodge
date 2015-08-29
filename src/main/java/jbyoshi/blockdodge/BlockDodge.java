@@ -20,6 +20,7 @@ import java.awt.event.*;
 import java.awt.image.*;
 import java.util.*;
 import java.util.concurrent.atomic.*;
+import java.util.prefs.*;
 
 import javax.swing.*;
 
@@ -36,6 +37,7 @@ public final class BlockDodge extends JPanel {
 	private static final String COPYRIGHT_TEXT = "Copyright 2015 JBYoshi        github.com/JBYoshi/BlockDodge";
 	private static final RandomChooser<Color> COLORS = new RandomChooser<>(Color.BLUE, Color.CYAN, Color.GREEN, Color.MAGENTA,
 			new Color(255, 127, 0), new Color(0, 140, 0), Color.RED, Color.YELLOW);
+	private static final Data DATA = new Data();
 
 	public BlockDodge() {
 		this.buffer = createBuffer();
@@ -160,15 +162,28 @@ public final class BlockDodge extends JPanel {
 				g.setColor(shape.color);
 				g.fill(shape.shape);
 			}
+
 			g.setColor(Color.WHITE);
 			g.setFont(g.getFont().deriveFont(20.0f));
+			try {
+				int highScore = DATA.getHighScore();
+				String highScoreText = "High Score: " + highScore;
+				g.drawString(highScoreText, getWidth() - 50 - g.getFontMetrics().stringWidth(highScoreText), 50);
+				if (score >= highScore + 1) {
+					g.setColor(Color.YELLOW);
+				}
+			} catch (BackingStoreException e) {
+				e.printStackTrace();
+			}
 			g.drawString("Score: " + (int) score, 50, 50);
+
 			if (!includePlayer) {
 				g.setFont(g.getFont().deriveFont(10.0f));
 				int textWidth = g.getFontMetrics().stringWidth(COPYRIGHT_TEXT);
 				int textHeight = g.getFontMetrics().getHeight();
 				g.drawString(COPYRIGHT_TEXT, getWidth() / 2 - textWidth / 2, getHeight() - 10 - textHeight);
 			}
+
 			g.dispose();
 			this.buffer = buffer;
 			repaint();
@@ -182,6 +197,11 @@ public final class BlockDodge extends JPanel {
 				} catch (InterruptedException e) {
 				}
 			}
+		}
+		try {
+			DATA.updateHighScore((int) score);
+		} catch (BackingStoreException e) {
+			e.printStackTrace();
 		}
 	}
 
