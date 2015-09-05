@@ -38,6 +38,9 @@ public final class BlockDodgePanel extends JPanel {
 					BufferedImage.TYPE_INT_RGB);
 			Graphics2D g = buffer.createGraphics();
 
+			g.setColor(Color.BLACK);
+			g.fillRect(0, 0, buffer.getWidth(), buffer.getHeight());
+
 			for (DodgeShape shape : getShapes()) {
 				g.setColor(shape.color);
 				g.fill(shape.shape);
@@ -61,15 +64,12 @@ public final class BlockDodgePanel extends JPanel {
 		}
 
 		@Override
-		protected void calculateSize(Dimension target) {
-			getSize(target);
+		protected Dimension calculateSize() {
+			return getSize();
 		}
 	};
 
 	public BlockDodgePanel() {
-		// Just temporary.
-		this.buffer = new BufferedImage(1, 1, BufferedImage.TYPE_BYTE_BINARY);
-
 		addKeyListener(game.getPlayer());
 		addFocusListener(game.getPlayer());
 
@@ -90,7 +90,9 @@ public final class BlockDodgePanel extends JPanel {
 
 	@Override
 	public void paintComponent(Graphics g) {
-		g.drawImage(buffer, 0, 0, null);
+		if (buffer != null) {
+			g.drawImage(buffer, 0, 0, null);
+		}
 	}
 
 	private static JLabel label(String text) {
