@@ -20,14 +20,14 @@ import java.awt.geom.*;
 import java.util.*;
 
 public abstract class DodgeShape {
-	protected final BlockDodge game;
+	protected final BlockDodgeGame game;
 	protected final Random rand = new Random();
 	final Color color;
 	private static final float DROP_SCALE = 0.25f;
 	private int dropCount = 0;
 	final Rectangle2D.Double shape;
 
-	public DodgeShape(BlockDodge game, double x, double y, double w, double h, Color c) {
+	public DodgeShape(BlockDodgeGame game, double x, double y, double w, double h, Color c) {
 		this.game = game;
 		this.shape = new Rectangle2D.Double(x, y, w, h);
 		this.color = c;
