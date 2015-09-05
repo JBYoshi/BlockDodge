@@ -2,7 +2,7 @@ package jbyoshi.blockdodge;
 
 import java.util.prefs.*;
 
-final class Data {
+final class HighScores {
 	private static final Preferences prefs;
 
 	static {
@@ -24,7 +24,7 @@ final class Data {
 		return prefs.getInt("highScore", 0);
 	}
 
-	private Data() {
+	private HighScores() {
 	}
 
 }

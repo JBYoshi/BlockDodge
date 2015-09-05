@@ -47,7 +47,7 @@ public final class BlockDodgePanel extends JPanel {
 			g.setColor(Color.WHITE);
 			g.setFont(g.getFont().deriveFont(20.0f));
 			try {
-				int highScore = Data.getHighScore();
+				int highScore = HighScores.getHighScore();
 				String highScoreText = "High Score: " + highScore;
 				g.drawString(highScoreText, getWidth() - 50 - g.getFontMetrics().stringWidth(highScoreText), 50);
 				if (getScore() >= highScore + 1) {

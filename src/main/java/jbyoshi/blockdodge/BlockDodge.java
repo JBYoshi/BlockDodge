@@ -87,7 +87,7 @@ public final class BlockDodge {
 			isPlaying.set(true);
 			panel.getGame().go(true);
 			try {
-				Data.updateHighScore(panel.getGame().getScore());
+				HighScores.updateHighScore(panel.getGame().getScore());
 			} catch (BackingStoreException e) {
 				e.printStackTrace();
 			}
