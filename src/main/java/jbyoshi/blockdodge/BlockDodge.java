@@ -87,7 +87,12 @@ public final class BlockDodge {
 			isPlaying.set(true);
 			panel.getGame().go(true);
 			try {
-				HighScores.updateHighScore(panel.getGame().getScore());
+				int score = panel.getGame().getScore();
+				if (score > HighScores.getHighScore() && JOptionPane.showConfirmDialog(frame,
+						new Object[] { "New high score!", score, "Save?" }, frame.getTitle(), JOptionPane.YES_NO_OPTION,
+						JOptionPane.PLAIN_MESSAGE) == JOptionPane.YES_OPTION) {
+					HighScores.updateHighScore(score);
+				}
 			} catch (BackingStoreException e) {
 				e.printStackTrace();
 			}
