@@ -16,7 +16,6 @@
 package jbyoshi.blockdodge;
 
 import java.awt.*;
-import java.awt.image.*;
 import java.util.*;
 import java.util.concurrent.atomic.*;
 
@@ -29,13 +28,8 @@ public abstract class BlockDodgeGame {
 	private final PlayerDodgeShape player = new PlayerDodgeShape(this);
 	private final AtomicBoolean stop = new AtomicBoolean(false);
 	private volatile double score;
-	private static final String COPYRIGHT_TEXT = "Copyright 2015 JBYoshi        github.com/JBYoshi/BlockDodge";
 	private static final RandomChooser<Color> COLORS = new RandomChooser<>(Color.BLUE, Color.CYAN, Color.GREEN,
 			Color.MAGENTA, new Color(255, 127, 0), new Color(0, 140, 0), Color.RED, Color.YELLOW);
-
-	private BufferedImage createBuffer() {
-		return new BufferedImage(Math.max(1, getWidth()), Math.max(1, getHeight()), BufferedImage.TYPE_INT_RGB);
-	}
 
 	public void add(DodgeShape shape) {
 		shapes.add(shape);
@@ -152,26 +146,6 @@ public abstract class BlockDodgeGame {
 				includePlayer ? timer / 2500.0 + 1 : 1.5));
 	}
 
-	private void paint(boolean includePlayer) {
-		BufferedImage buffer = createBuffer();
-		Graphics2D g = buffer.createGraphics();
-		for (DodgeShape shape : shapes) {
-			g.setColor(shape.color);
-			g.fill(shape.shape);
-		}
-		g.setColor(Color.WHITE);
-		g.setFont(g.getFont().deriveFont(20.0f));
-		g.drawString("Score: " + (int) score, 50, 50);
-		if (!includePlayer) {
-			g.setFont(g.getFont().deriveFont(10.0f));
-			int textWidth = g.getFontMetrics().stringWidth(COPYRIGHT_TEXT);
-			int textHeight = g.getFontMetrics().getHeight();
-			g.drawString(COPYRIGHT_TEXT, getWidth() / 2 - textWidth / 2, getHeight() - 10 - textHeight);
-		}
-		g.dispose();
-		repaint(buffer);
-	}
-
 	public void stop() {
 		stop.set(true);
 	}
@@ -184,9 +158,21 @@ public abstract class BlockDodgeGame {
 		return size.height;
 	}
 
+	public double getRawScore() {
+		return score;
+	}
+
+	public int getScore() {
+		return (int) score;
+	}
+
+	public Set<DodgeShape> getShapes() {
+		return Collections.unmodifiableSet(shapes);
+	}
+
 	protected abstract void calculateSize(Dimension target);
 
 	protected abstract void updatePaused(boolean paused);
 
-	protected abstract void repaint(BufferedImage buffer);
+	protected abstract void paint(boolean hasPlayer);
 }

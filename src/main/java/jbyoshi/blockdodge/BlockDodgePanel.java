@@ -24,6 +24,7 @@ public final class BlockDodgePanel extends JPanel {
 	private static final long serialVersionUID = 6904399199721821562L;
 	private final JComponent pauseScreen = Box.createVerticalBox();
 	private volatile BufferedImage buffer;
+	private static final String COPYRIGHT_TEXT = "Copyright 2015 JBYoshi        github.com/JBYoshi/BlockDodge";
 	private final BlockDodgeGame game = new BlockDodgeGame() {
 
 		@Override
@@ -32,7 +33,28 @@ public final class BlockDodgePanel extends JPanel {
 		}
 
 		@Override
-		protected void repaint(BufferedImage buffer) {
+		protected void paint(boolean includePlayer) {
+			BufferedImage buffer = new BufferedImage(Math.max(1, getWidth()), Math.max(1, getHeight()),
+					BufferedImage.TYPE_INT_RGB);
+			Graphics2D g = buffer.createGraphics();
+
+			for (DodgeShape shape : getShapes()) {
+				g.setColor(shape.color);
+				g.fill(shape.shape);
+			}
+
+			g.setColor(Color.WHITE);
+			g.setFont(g.getFont().deriveFont(20.0f));
+			g.drawString("Score: " + getScore(), 50, 50);
+
+			if (!includePlayer) {
+				g.setFont(g.getFont().deriveFont(10.0f));
+				int textWidth = g.getFontMetrics().stringWidth(COPYRIGHT_TEXT);
+				int textHeight = g.getFontMetrics().getHeight();
+				g.drawString(COPYRIGHT_TEXT, getWidth() / 2 - textWidth / 2, getHeight() - 10 - textHeight);
+			}
+			g.dispose();
+
 			BlockDodgePanel.this.buffer = buffer;
 			BlockDodgePanel.this.repaint();
 			BlockDodgePanel.this.requestFocusInWindow();
