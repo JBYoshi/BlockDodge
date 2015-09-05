@@ -83,24 +83,34 @@ public final class BlockDodge {
 			}
 		});
 		while (true) {
+			// Start screen
+			isPlaying.set(false);
 			infoContainer.setVisible(true);
 			frame.revalidate();
 			panel.getGame().go(false);
+
+			// Actual game
 			infoContainer.setVisible(false);
 			frame.revalidate();
 			isPlaying.set(true);
+			panel.reset();
+
 			panel.getGame().go(true);
+
+			// High scores
 			try {
 				int score = panel.getGame().getScore();
 				if (score > HighScores.getHighScore() && JOptionPane.showConfirmDialog(frame,
 						new Object[] { "New high score!", score, "Save?" }, frame.getTitle(), JOptionPane.YES_NO_OPTION,
 						JOptionPane.PLAIN_MESSAGE) == JOptionPane.YES_OPTION) {
 					HighScores.updateHighScore(score);
+				} else {
+					// Not a high score.
+					panel.reset();
 				}
 			} catch (BackingStoreException e) {
 				e.printStackTrace();
 			}
-			isPlaying.set(false);
 		}
 	}
 

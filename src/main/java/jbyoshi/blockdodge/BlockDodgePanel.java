@@ -23,6 +23,7 @@ import javax.swing.*;
 
 public final class BlockDodgePanel extends JPanel {
 	private static final long serialVersionUID = 6904399199721821562L;
+	private boolean isHighScore = false;
 	private final JComponent pauseScreen = Box.createVerticalBox();
 	private volatile BufferedImage buffer;
 	private final BlockDodgeGame game = new BlockDodgeGame() {
@@ -50,6 +51,9 @@ public final class BlockDodgePanel extends JPanel {
 				String highScoreText = "High Score: " + highScore;
 				g.drawString(highScoreText, getWidth() - 50 - g.getFontMetrics().stringWidth(highScoreText), 50);
 				if (getScore() >= highScore + 1) {
+					isHighScore = true;
+				}
+				if (isHighScore) {
 					g.setColor(Color.YELLOW);
 				}
 			} catch (BackingStoreException e) {
@@ -89,6 +93,10 @@ public final class BlockDodgePanel extends JPanel {
 
 	public BlockDodgeGame getGame() {
 		return game;
+	}
+
+	public void reset() {
+		isHighScore = false;
 	}
 
 	@Override
