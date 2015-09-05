@@ -24,7 +24,7 @@ public final class PlayerDodgeShape extends DodgeShape implements KeyListener, F
 	private volatile boolean up, down, left, right, quit, pause;
 	private static final double SQRT_HALF = Math.sqrt(0.5);
 
-	public PlayerDodgeShape(BlockDodge game) {
+	PlayerDodgeShape(BlockDodgeGame game) {
 		super(game, 0, 0, SIZE, SIZE, COLOR);
 	}
 
@@ -125,7 +125,7 @@ public final class PlayerDodgeShape extends DodgeShape implements KeyListener, F
 			paused = false;
 		}
 		pause = paused;
-		game.pauseScreen.setVisible(paused);
+		game.updatePaused(paused);
 	}
 
 	@Override
