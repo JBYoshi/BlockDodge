@@ -3,24 +3,28 @@ package jbyoshi.blockdodge;
 import java.util.prefs.*;
 
 final class Data {
-	private final Preferences system = Preferences.userNodeForPackage(BlockDodge.class);
+	private static final Preferences prefs;
 
-	Data() {
+	static {
+		prefs = Preferences.userNodeForPackage(BlockDodge.class);
 		try {
-			system.sync();
+			prefs.sync();
 		} catch (BackingStoreException e) {
-			e.printStackTrace();
-			System.exit(1);
+			throw new Error(e);
 		}
 	}
 
-	synchronized void updateHighScore(int score) throws BackingStoreException {
-		system.putInt("highScore", Math.max(getHighScore(), score));
-		system.flush();
+	static synchronized void updateHighScore(int score) throws BackingStoreException {
+		prefs.putInt("highScore", Math.max(getHighScore(), score));
+		prefs.flush();
 	}
 
-	synchronized int getHighScore() throws BackingStoreException {
-		system.sync();
-		return system.getInt("highScore", 0);
+	static synchronized int getHighScore() throws BackingStoreException {
+		prefs.sync();
+		return prefs.getInt("highScore", 0);
 	}
+
+	private Data() {
+	}
+
 }

@@ -37,7 +37,6 @@ public final class BlockDodge extends JPanel {
 	private static final String COPYRIGHT_TEXT = "Copyright 2015 JBYoshi        github.com/JBYoshi/BlockDodge";
 	private static final RandomChooser<Color> COLORS = new RandomChooser<>(Color.BLUE, Color.CYAN, Color.GREEN, Color.MAGENTA,
 			new Color(255, 127, 0), new Color(0, 140, 0), Color.RED, Color.YELLOW);
-	private static final Data DATA = new Data();
 
 	public BlockDodge() {
 		this.buffer = createBuffer();
@@ -166,7 +165,7 @@ public final class BlockDodge extends JPanel {
 			g.setColor(Color.WHITE);
 			g.setFont(g.getFont().deriveFont(20.0f));
 			try {
-				int highScore = DATA.getHighScore();
+				int highScore = Data.getHighScore();
 				String highScoreText = "High Score: " + highScore;
 				g.drawString(highScoreText, getWidth() - 50 - g.getFontMetrics().stringWidth(highScoreText), 50);
 				if (score >= highScore + 1) {
@@ -199,7 +198,7 @@ public final class BlockDodge extends JPanel {
 			}
 		}
 		try {
-			DATA.updateHighScore((int) score);
+			Data.updateHighScore((int) score);
 		} catch (BackingStoreException e) {
 			e.printStackTrace();
 		}
