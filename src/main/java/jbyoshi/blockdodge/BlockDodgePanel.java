@@ -25,7 +25,6 @@ public final class BlockDodgePanel extends JPanel {
 	private static final long serialVersionUID = 6904399199721821562L;
 	private final JComponent pauseScreen = Box.createVerticalBox();
 	private volatile BufferedImage buffer;
-	private static final String COPYRIGHT_TEXT = "Copyright 2015 JBYoshi        github.com/JBYoshi/BlockDodge";
 	private final BlockDodgeGame game = new BlockDodgeGame() {
 
 		@Override
@@ -57,13 +56,6 @@ public final class BlockDodgePanel extends JPanel {
 				e.printStackTrace();
 			}
 			g.drawString("Score: " + getScore(), 50, 50);
-
-			if (!includePlayer) {
-				g.setFont(g.getFont().deriveFont(10.0f));
-				int textWidth = g.getFontMetrics().stringWidth(COPYRIGHT_TEXT);
-				int textHeight = g.getFontMetrics().getHeight();
-				g.drawString(COPYRIGHT_TEXT, getWidth() / 2 - textWidth / 2, getHeight() - 10 - textHeight);
-			}
 			g.dispose();
 
 			BlockDodgePanel.this.buffer = buffer;

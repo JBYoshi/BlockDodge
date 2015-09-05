@@ -23,6 +23,8 @@ import java.util.prefs.*;
 import javax.swing.*;
 
 public final class BlockDodge {
+	private static final String COPYRIGHT_TEXT = "Copyright 2015 JBYoshi        github.com/JBYoshi/BlockDodge";
+
 	public static void main(String[] args) {
 		JFrame frame = new JFrame("Block Dodge");
 		frame.enableInputMethods(false);
@@ -42,6 +44,8 @@ public final class BlockDodge {
 		info.add(label("Press Space or Enter to start."));
 		info.add(label("You can press Escape to pause and Delete to quit."));
 		info.add(Box.createVerticalGlue());
+		info.add(label(COPYRIGHT_TEXT, 10));
+		info.add(Box.createVerticalStrut(50));
 
 		Box infoContainer = Box.createHorizontalBox();
 		infoContainer.add(Box.createHorizontalGlue());
