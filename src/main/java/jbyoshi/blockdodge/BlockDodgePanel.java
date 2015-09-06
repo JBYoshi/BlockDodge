@@ -17,14 +17,15 @@ package jbyoshi.blockdodge;
 
 import java.awt.*;
 import java.awt.image.*;
+import java.util.prefs.*;
 
 import javax.swing.*;
 
 public final class BlockDodgePanel extends JPanel {
 	private static final long serialVersionUID = 6904399199721821562L;
+	private boolean isHighScore = false;
 	private final JComponent pauseScreen = Box.createVerticalBox();
 	private volatile BufferedImage buffer;
-	private static final String COPYRIGHT_TEXT = "Copyright 2015 JBYoshi        github.com/JBYoshi/BlockDodge";
 	private final BlockDodgeGame game = new BlockDodgeGame() {
 
 		@Override
@@ -48,14 +49,20 @@ public final class BlockDodgePanel extends JPanel {
 
 			g.setColor(Color.WHITE);
 			g.setFont(g.getFont().deriveFont(20.0f));
-			g.drawString("Score: " + getScore(), 50, 50);
-
-			if (!includePlayer) {
-				g.setFont(g.getFont().deriveFont(10.0f));
-				int textWidth = g.getFontMetrics().stringWidth(COPYRIGHT_TEXT);
-				int textHeight = g.getFontMetrics().getHeight();
-				g.drawString(COPYRIGHT_TEXT, getWidth() / 2 - textWidth / 2, getHeight() - 10 - textHeight);
+			try {
+				int highScore = HighScores.getHighScore();
+				String highScoreText = "High Score: " + highScore;
+				g.drawString(highScoreText, getWidth() - 50 - g.getFontMetrics().stringWidth(highScoreText), 50);
+				if (getScore() >= highScore + 1) {
+					isHighScore = true;
+				}
+				if (isHighScore) {
+					g.setColor(Color.YELLOW);
+				}
+			} catch (BackingStoreException e) {
+				e.printStackTrace();
 			}
+			g.drawString("Score: " + getScore(), 50, 50);
 			g.dispose();
 
 			BlockDodgePanel.this.buffer = buffer;
@@ -86,6 +93,10 @@ public final class BlockDodgePanel extends JPanel {
 
 	public BlockDodgeGame getGame() {
 		return game;
+	}
+
+	public void reset() {
+		isHighScore = false;
 	}
 
 	@Override

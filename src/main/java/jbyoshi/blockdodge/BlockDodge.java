@@ -18,10 +18,13 @@ package jbyoshi.blockdodge;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.concurrent.atomic.*;
+import java.util.prefs.*;
 
 import javax.swing.*;
 
 public final class BlockDodge {
+	private static final String COPYRIGHT_TEXT = "Copyright 2015 JBYoshi        github.com/JBYoshi/BlockDodge";
+
 	public static void main(String[] args) {
 		JFrame frame = new JFrame("Block Dodge");
 		frame.enableInputMethods(false);
@@ -41,6 +44,8 @@ public final class BlockDodge {
 		info.add(label("Press Space or Enter to start."));
 		info.add(label("You can press Escape to pause and Delete to quit."));
 		info.add(Box.createVerticalGlue());
+		info.add(label(COPYRIGHT_TEXT, 10));
+		info.add(Box.createVerticalStrut(50));
 
 		Box infoContainer = Box.createHorizontalBox();
 		infoContainer.add(Box.createHorizontalGlue());
@@ -78,14 +83,34 @@ public final class BlockDodge {
 			}
 		});
 		while (true) {
+			// Start screen
+			isPlaying.set(false);
 			infoContainer.setVisible(true);
 			frame.revalidate();
 			panel.getGame().go(false);
+
+			// Actual game
 			infoContainer.setVisible(false);
 			frame.revalidate();
 			isPlaying.set(true);
+			panel.reset();
+
 			panel.getGame().go(true);
-			isPlaying.set(false);
+
+			// High scores
+			try {
+				int score = panel.getGame().getScore();
+				if (score > HighScores.getHighScore() && JOptionPane.showConfirmDialog(frame,
+						new Object[] { "New high score!", score, "Save?" }, frame.getTitle(), JOptionPane.YES_NO_OPTION,
+						JOptionPane.PLAIN_MESSAGE) == JOptionPane.YES_OPTION) {
+					HighScores.updateHighScore(score);
+				} else {
+					// Not a high score.
+					panel.reset();
+				}
+			} catch (BackingStoreException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
