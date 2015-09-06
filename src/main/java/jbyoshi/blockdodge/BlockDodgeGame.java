@@ -65,7 +65,20 @@ public abstract class BlockDodgeGame {
 		while (!stop.get()) {
 			long start = System.currentTimeMillis();
 
-			calculateSize(size);
+			Dimension newSize = calculateSize();
+			int xChange = newSize.width - size.width;
+			int yChange = newSize.height - size.height;
+			if (xChange != 0 || yChange != 0) {
+				for (DodgeShape shape : shapes) {
+					if (xChange != 0 && shape.shape.getMaxX() > newSize.width) {
+						shape.shape.x += xChange;
+					}
+					if (yChange != 0 && shape.shape.getMaxY() > newSize.height) {
+						shape.shape.y += yChange;
+					}
+				}
+				size = newSize;
+			}
 
 			for (DodgeShape shape : new HashSet<DodgeShape>(shapes)) {
 				shape.move();
@@ -170,7 +183,7 @@ public abstract class BlockDodgeGame {
 		return Collections.unmodifiableSet(shapes);
 	}
 
-	protected abstract void calculateSize(Dimension target);
+	protected abstract Dimension calculateSize();
 
 	protected abstract void updatePaused(boolean paused);
 
