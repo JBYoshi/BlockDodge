@@ -1,11 +1,12 @@
-# Maven
-/target/
-/dependency-reduced-pom.xml
+# Gradle
+/build/
+/.gradle/
 
 # Eclipse
 /.project
 /.classpath
 /.settings/
+/bin/
 
 # NetBeans
 /nbproject/
