@@ -103,7 +103,7 @@ public abstract class BlockDodgeGame {
 			}
 
 			if (contains(player)) {
-				score += 500000.0 / getWidth() / getHeight();
+				score += 250000.0 / getWidth() / getHeight();
 			}
 
 			paint(includePlayer);
@@ -156,7 +156,7 @@ public abstract class BlockDodgeGame {
 		float dir = (rand.nextFloat() / 2 + dirChg) % 1;
 		Color c = COLORS.next();
 		add(new BounceDodgeShape(this, x, y, w, h, c, (float) (dir * 2 * Math.PI),
-				includePlayer ? timer / 2500.0 + 1 : 1.5));
+				includePlayer ? timer / 5000.0 + 1 : 1.5));
 	}
 
 	public void stop() {
