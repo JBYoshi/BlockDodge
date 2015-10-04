@@ -17,6 +17,7 @@ package jbyoshi.blockdodge;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.util.*;
 import java.util.concurrent.atomic.*;
 import java.util.prefs.*;
 
@@ -27,6 +28,7 @@ public final class BlockDodge {
 
 	public static void main(String[] args) {
 		JFrame frame = new JFrame("Block Dodge");
+		frame.setIconImages(Arrays.asList(loadIcon(16), loadIcon(32), loadIcon(64), loadIcon(128), loadIcon(256)));
 		frame.enableInputMethods(false);
 		final BlockDodgePanel panel = new BlockDodgePanel();
 		frame.setContentPane(panel);
@@ -112,6 +114,10 @@ public final class BlockDodge {
 				e.printStackTrace();
 			}
 		}
+	}
+
+	private static Image loadIcon(int size) {
+		return Toolkit.getDefaultToolkit().getImage(BlockDodge.class.getResource("icon-" + size + ".png"));
 	}
 
 	private static JLabel label(String text) {
