@@ -36,8 +36,17 @@ public abstract class DodgeShape {
 	protected abstract void move();
 
 	public void explode() {
-		boolean[][] used = new boolean[(int) shape.getWidth()][(int) shape.getHeight()];
-		int maxArea = (int) ((int) shape.getWidth() * (int) shape.getHeight() * DROP_SCALE);
+		// Subtract 1 so tiny drops don't lag out the game.
+		int width = (int) shape.getWidth() - 1;
+		int height = (int) shape.getHeight() - 1;
+		if (width <= 0 || height <= 0) {
+			// No room to explode. Just cancel.
+			game.remove(this);
+			return;
+		}
+
+		boolean[][] used = new boolean[width][height];
+		int maxArea = (int) (width * height * DROP_SCALE);
 		while (true) {
 			int dropX = -1, dropY = -1;
 			findPos: for (int x = 0; x < used.length; x++) {
