@@ -130,10 +130,10 @@ public abstract class DodgeShape {
 
 		@Override
 		protected void onCollided(DodgeShape other) {
-			if (other instanceof Drop && ((Drop) other).outer() == DodgeShape.this) {
+			if (other instanceof Drop && ((Drop) other).outer() == outer()) {
 				return;
 			}
-			game.remove(this);
+			super.onCollided(other);
 		}
 
 		private DodgeShape outer() {
