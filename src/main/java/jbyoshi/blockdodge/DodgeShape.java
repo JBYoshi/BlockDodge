@@ -117,7 +117,7 @@ public abstract class DodgeShape {
 		@Override
 		public void move() {
 			super.move();
-			if (++time % 5 == 0) {
+			if (++time % 12 == 0) {
 				if (getWidth() == 0 && getHeight() == 0) {
 					game.remove(this);
 					return;
