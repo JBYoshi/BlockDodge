@@ -38,7 +38,7 @@ public final class BlockDodge extends JPanel {
 		}
 
 		@Override
-		protected void paint(boolean includePlayer) {
+		protected void update() {
 			BufferedImage buffer = new BufferedImage(Math.max(1, getWidth()), Math.max(1, getHeight()),
 					BufferedImage.TYPE_INT_RGB);
 			Graphics2D g = buffer.createGraphics();
@@ -79,10 +79,13 @@ public final class BlockDodge extends JPanel {
 			return getSize();
 		}
 	};
+	private final PlayerDodgeShape player;
+	private final InputInGame inputInGame;
 
 	public BlockDodge() {
-		addKeyListener(game.getPlayer());
-		addFocusListener(game.getPlayer());
+		inputInGame = new InputInGame(game);
+		player = new PlayerDodgeShape(game, inputInGame);
+		addKeyListener(inputInGame);
 
 		setLayout(new BorderLayout());
 		pauseScreen.setVisible(false);
@@ -173,7 +176,7 @@ public final class BlockDodge extends JPanel {
 			isPlaying.set(false);
 			infoContainer.setVisible(true);
 			frame.revalidate();
-			panel.getGame().go(false);
+			panel.getGame().go(null);
 
 			// Actual game
 			infoContainer.setVisible(false);
@@ -181,7 +184,7 @@ public final class BlockDodge extends JPanel {
 			isPlaying.set(true);
 			panel.reset();
 
-			panel.getGame().go(true);
+			panel.getGame().go(panel.player);
 
 			// High scores
 			try {
