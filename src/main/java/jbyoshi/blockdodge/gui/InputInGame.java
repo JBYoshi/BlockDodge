@@ -17,9 +17,10 @@ public final class InputInGame implements Input, PlayerController, KeyListener {
 	}
 
 	@Override
-	public Vector2d getMovement() {
+	public synchronized Vector2d getMovement() {
 		Vector2d movement = new Vector2d(left == right ? 0 : left ? -1 : 1, up == down ? 0 : up ? -1 : 1);
-		if (up || down || left || right) { // "Cannot normalize the zero vector"
+		// "Cannot normalize the zero vector"
+		if (movement.equals(Vector2d.ZERO)) {
 			movement = movement.normalize();
 		}
 		return movement;
@@ -30,7 +31,7 @@ public final class InputInGame implements Input, PlayerController, KeyListener {
 	}
 
 	@Override
-	public void keyPressed(KeyEvent e) {
+	public synchronized void keyPressed(KeyEvent e) {
 		switch (e.getKeyCode()) {
 		case KeyEvent.VK_UP:
 			up = true;
