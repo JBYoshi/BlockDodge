@@ -17,6 +17,7 @@ package jbyoshi.blockdodge;
 
 import java.awt.*;
 
+import com.flowpowered.math.*;
 import com.flowpowered.math.vector.*;
 
 public final class PlayerDodgeShape extends DodgeShape {
@@ -32,8 +33,8 @@ public final class PlayerDodgeShape extends DodgeShape {
 	@Override
 	public void move() {
 		Vector2d movement = controller.getMovement();
-		setX(getX() + movement.getX());
-		setY(getY() + movement.getY());
+		setX(GenericMath.clamp(0, getX() + movement.getX(), game.getWidth() - getWidth()));
+		setX(GenericMath.clamp(0, getY() + movement.getY(), game.getHeight() - getHeight()));
 	}
 
 	void reset() {
