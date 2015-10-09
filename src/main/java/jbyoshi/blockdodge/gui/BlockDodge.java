@@ -16,20 +16,20 @@
 package jbyoshi.blockdodge.gui;
 
 import java.awt.*;
-import java.awt.event.*;
 import java.awt.image.*;
 import java.util.*;
-import java.util.concurrent.atomic.*;
 import java.util.prefs.*;
 
 import javax.swing.*;
 
 import jbyoshi.blockdodge.*;
+import jbyoshi.blockdodge.gui.*;
 
 public final class BlockDodge extends JPanel {
 	private static final String COPYRIGHT_TEXT = "Copyright 2015 JBYoshi        github.com/JBYoshi/BlockDodge";
 	private static final long serialVersionUID = 2675582657135016482L;
 	private boolean isHighScore = false;
+	final JFrame frame;
 	private final JComponent pauseScreen = Box.createVerticalBox();
 	private volatile BufferedImage buffer;
 	private final BlockDodgeGame game = new BlockDodgeGame() {
@@ -82,12 +82,17 @@ public final class BlockDodge extends JPanel {
 		}
 	};
 	private final PlayerDodgeShape player;
+	private final InputMainMenu inputMainMenu;
 	private final InputInGame inputInGame;
+	private Input input;
 
-	public BlockDodge() {
-		inputInGame = new InputInGame(game);
+	public BlockDodge(JFrame frame, Component mainMenu) {
+		this.frame = frame;
+
+		inputMainMenu = new InputMainMenu(this, mainMenu);
+		inputInGame = new InputInGame(this);
 		player = new PlayerDodgeShape(game, inputInGame);
-		addKeyListener(inputInGame);
+		setInput(inputMainMenu);
 
 		setLayout(new BorderLayout());
 		pauseScreen.setVisible(false);
@@ -115,16 +120,15 @@ public final class BlockDodge extends JPanel {
 		}
 	}
 
-	public static void main(String[] args) {
-		JFrame frame = new JFrame("Block Dodge");
-		frame.setIconImages(Arrays.asList(loadIcon(16), loadIcon(32), loadIcon(64), loadIcon(128), loadIcon(256)));
-		frame.enableInputMethods(false);
-		final BlockDodge panel = new BlockDodge();
-		frame.setContentPane(panel);
-		frame.setSize(800, 600);
-		frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-		frame.setVisible(true);
+	void setInput(Input input) {
+		if (this.input != null) {
+			this.input.deactivate();
+		}
+		input.activate();
+		this.input = input;
+	}
 
+	public static void main(String[] args) {
 		Box info = Box.createVerticalBox();
 		info.add(Box.createVerticalGlue());
 		info.add(label("Block Dodge", 32));
@@ -142,48 +146,30 @@ public final class BlockDodge extends JPanel {
 		infoContainer.add(Box.createHorizontalGlue());
 		infoContainer.add(info);
 		infoContainer.add(Box.createHorizontalGlue());
-		frame.setGlassPane(infoContainer);
-		infoContainer.setVisible(false);
 
-		final AtomicBoolean isPlaying = new AtomicBoolean(false);
-		panel.addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyPressed(KeyEvent e) {
-				if (isPlaying.get()) {
-					return;
-				}
-				switch (e.getKeyCode()) {
-				case KeyEvent.VK_ENTER:
-				case KeyEvent.VK_SPACE:
-					panel.getGame().stop();
-					break;
-				case KeyEvent.VK_F11:
-					GraphicsDevice device = frame.getGraphicsConfiguration().getDevice();
-					if (device.isFullScreenSupported() && device.getFullScreenWindow() != frame) {
-						frame.dispose();
-						frame.setUndecorated(true);
-						device.setFullScreenWindow(frame);
-					} else {
-						frame.dispose();
-						device.setFullScreenWindow(null);
-						frame.setUndecorated(false);
-						frame.setVisible(true);
-					}
-					frame.revalidate();
-				}
-			}
-		});
+		JFrame frame = new JFrame("Block Dodge");
+		frame.setIconImages(Arrays.asList(loadIcon(16), loadIcon(32), loadIcon(64), loadIcon(128), loadIcon(256)));
+		frame.enableInputMethods(false);
+
+		final BlockDodge panel = new BlockDodge(frame, infoContainer);
+
+		frame.setContentPane(panel);
+		frame.setGlassPane(infoContainer);
+		frame.setSize(800, 600);
+		frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+		frame.setVisible(true);
+
 		while (true) {
 			// Start screen
-			isPlaying.set(false);
+			panel.setInput(panel.inputMainMenu);
 			infoContainer.setVisible(true);
 			frame.revalidate();
 			panel.getGame().go(null);
 
 			// Actual game
+			panel.setInput(panel.inputInGame);
 			infoContainer.setVisible(false);
 			frame.revalidate();
-			isPlaying.set(true);
 			panel.reset();
 
 			panel.getGame().go(panel.player);

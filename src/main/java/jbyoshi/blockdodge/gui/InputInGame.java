@@ -6,17 +6,23 @@ import com.flowpowered.math.vector.*;
 
 import jbyoshi.blockdodge.*;
 
-public final class InputInGame implements PlayerController, KeyListener {
+public final class InputInGame implements Input, PlayerController, KeyListener {
+	private final BlockDodge panel;
 	private final BlockDodgeGame game;
 	private volatile boolean up, down, left, right;
 
-	public InputInGame(BlockDodgeGame game) {
-		this.game = game;
+	public InputInGame(BlockDodge panel) {
+		this.panel = panel;
+		this.game = panel.getGame();
 	}
 
 	@Override
 	public Vector2d getMovement() {
-		return new Vector2d(up == down ? 0 : up ? -1 : 1, left == right ? 0 : left ? -1 : 1).normalize();
+		Vector2d movement = new Vector2d(left == right ? 0 : left ? -1 : 1, up == down ? 0 : up ? -1 : 1);
+		if (up || down || left || right) { // "Cannot normalize the zero vector"
+			movement = movement.normalize();
+		}
+		return movement;
 	}
 
 	@Override
@@ -60,6 +66,16 @@ public final class InputInGame implements PlayerController, KeyListener {
 			right = false;
 			break;
 		}
+	}
+
+	@Override
+	public void activate() {
+		panel.addKeyListener(this);
+	}
+
+	@Override
+	public void deactivate() {
+		panel.removeKeyListener(this);
 	}
 
 }
