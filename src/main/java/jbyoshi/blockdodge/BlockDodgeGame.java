@@ -19,6 +19,7 @@ import java.awt.*;
 import java.util.*;
 import java.util.concurrent.atomic.*;
 
+import jbyoshi.blockdodge.util.*;
 import jbyoshi.blockdodge.util.TaskQueue;
 
 public abstract class BlockDodgeGame {

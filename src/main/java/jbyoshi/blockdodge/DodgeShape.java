@@ -22,7 +22,7 @@ import java.util.*;
 public abstract class DodgeShape {
 	protected final BlockDodgeGame game;
 	protected final Random rand = new Random();
-	final Color color;
+	private final Color color;
 	private static final float DROP_SCALE = 0.25f;
 	private int dropCount = 0;
 	final Rectangle2D.Double shape;
@@ -102,7 +102,7 @@ public abstract class DodgeShape {
 		explode();
 	}
 
-	void onRemoved() {
+	protected void onRemoved() {
 	}
 
 	protected final class Drop extends BounceDodgeShape {
@@ -110,7 +110,7 @@ public abstract class DodgeShape {
 
 		protected Drop(int x1, int y1, int x2, int y2, float dir, double speed) {
 			super(DodgeShape.this.game, DodgeShape.this.getX() + x1, DodgeShape.this.getY() + y1, x2 - x1 + 1,
-					y2 - y1 + 1, DodgeShape.this.color, dir, speed);
+					y2 - y1 + 1, DodgeShape.this.getColor(), dir, speed);
 			DodgeShape.this.dropCount++;
 		}
 
@@ -150,7 +150,7 @@ public abstract class DodgeShape {
 		}
 
 		@Override
-		void onRemoved() {
+		protected void onRemoved() {
 			if (--DodgeShape.this.dropCount == 0) {
 				DodgeShape.this.onRemoved();
 			}
@@ -175,6 +175,14 @@ public abstract class DodgeShape {
 
 	public double getHeight() {
 		return shape.getHeight();
+	}
+
+	public Shape getShape() {
+		return new Rectangle2D.Double(getX(), getY(), getWidth(), getHeight());
+	}
+
+	public Color getColor() {
+		return color;
 	}
 
 	protected void setX(double x) {

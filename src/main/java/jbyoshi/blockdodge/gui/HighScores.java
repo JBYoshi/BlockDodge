@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package jbyoshi.blockdodge;
+package jbyoshi.blockdodge.gui;
 
 import java.util.prefs.*;
 
@@ -21,7 +21,7 @@ final class HighScores {
 	private static final Preferences prefs;
 
 	static {
-		prefs = Preferences.userNodeForPackage(BlockDodge.class);
+		prefs = Preferences.userRoot().node("jbyoshi/blockdodge");
 		try {
 			prefs.sync();
 		} catch (BackingStoreException e) {

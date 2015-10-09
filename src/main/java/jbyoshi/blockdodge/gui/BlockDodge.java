@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package jbyoshi.blockdodge;
+package jbyoshi.blockdodge.gui;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -23,6 +23,8 @@ import java.util.concurrent.atomic.*;
 import java.util.prefs.*;
 
 import javax.swing.*;
+
+import jbyoshi.blockdodge.*;
 
 public final class BlockDodge extends JPanel {
 	private static final String COPYRIGHT_TEXT = "Copyright 2015 JBYoshi        github.com/JBYoshi/BlockDodge";
@@ -47,8 +49,8 @@ public final class BlockDodge extends JPanel {
 			g.fillRect(0, 0, buffer.getWidth(), buffer.getHeight());
 
 			for (DodgeShape shape : getShapes()) {
-				g.setColor(shape.color);
-				g.fill(shape.shape);
+				g.setColor(shape.getColor());
+				g.fill(shape.getShape());
 			}
 
 			g.setColor(Color.WHITE);

@@ -24,7 +24,7 @@ public final class PlayerDodgeShape extends DodgeShape {
 	private static final int SIZE = 32;
 	private final PlayerController controller;
 
-	PlayerDodgeShape(BlockDodgeGame game, PlayerController controller) {
+	public PlayerDodgeShape(BlockDodgeGame game, PlayerController controller) {
 		super(game, 0, 0, SIZE, SIZE, COLOR);
 		this.controller = controller;
 	}
@@ -42,7 +42,7 @@ public final class PlayerDodgeShape extends DodgeShape {
 	}
 
 	@Override
-	void onRemoved() {
+	protected void onRemoved() {
 		game.stop();
 	}
 

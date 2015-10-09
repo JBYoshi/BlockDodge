@@ -1,8 +1,10 @@
-package jbyoshi.blockdodge;
+package jbyoshi.blockdodge.gui;
 
 import java.awt.event.*;
 
 import com.flowpowered.math.vector.*;
+
+import jbyoshi.blockdodge.*;
 
 public final class InputInGame implements PlayerController, KeyListener {
 	private final BlockDodgeGame game;
