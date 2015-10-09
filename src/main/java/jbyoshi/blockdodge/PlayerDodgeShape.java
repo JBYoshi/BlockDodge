@@ -34,7 +34,7 @@ public final class PlayerDodgeShape extends DodgeShape {
 	public void move() {
 		Vector2d movement = controller.getMovement();
 		setX(GenericMath.clamp(getX() + movement.getX(), 0, game.getWidth() - getWidth()));
-		setX(GenericMath.clamp(getY() + movement.getY(), 0, game.getHeight() - getHeight()));
+		setY(GenericMath.clamp(getY() + movement.getY(), 0, game.getHeight() - getHeight()));
 	}
 
 	void reset() {
