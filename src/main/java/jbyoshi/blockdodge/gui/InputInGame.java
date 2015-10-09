@@ -20,7 +20,7 @@ public final class InputInGame implements Input, PlayerController, KeyListener {
 	public synchronized Vector2d getMovement() {
 		Vector2d movement = new Vector2d(left == right ? 0 : left ? -1 : 1, up == down ? 0 : up ? -1 : 1);
 		// "Cannot normalize the zero vector"
-		if (movement.equals(Vector2d.ZERO)) {
+		if (!movement.equals(Vector2d.ZERO)) {
 			movement = movement.normalize();
 		}
 		return movement;
