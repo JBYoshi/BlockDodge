@@ -37,7 +37,7 @@ sourceCompatibility = '1.8'
 targetCompatibility = '1.8'
 
 apply plugin: 'application'
-mainClassName = 'jbyoshi.blockdodge.BlockDodge'
+mainClassName = 'jbyoshi.blockdodge.gui.BlockDodge'
 jar{manifest{attributes('Main-Class': mainClassName)}}
 
 dependencies {
