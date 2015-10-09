@@ -6,7 +6,6 @@ import java.awt.event.*;
 import javax.swing.*;
 
 import jbyoshi.blockdodge.*;
-import jbyoshi.blockdodge.gui.*;
 
 public final class InputMainMenu implements Input, KeyListener {
 	private final BlockDodge panel;
