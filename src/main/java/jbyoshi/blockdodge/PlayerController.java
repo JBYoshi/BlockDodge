@@ -15,8 +15,8 @@
  */
 package jbyoshi.blockdodge;
 
-import com.flowpowered.math.vector.*;
+import java.awt.geom.*;
 
 public interface PlayerController {
-	public Vector2d getMovement();
+	public Point2D move(PlayerDodgeShape player);
 }

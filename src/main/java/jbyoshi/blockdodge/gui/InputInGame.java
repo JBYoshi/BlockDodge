@@ -16,29 +16,38 @@
 package jbyoshi.blockdodge.gui;
 
 import java.awt.event.*;
-
-import com.flowpowered.math.vector.*;
+import java.awt.geom.*;
 
 import jbyoshi.blockdodge.*;
 
 final class InputInGame extends Input implements PlayerController, FocusListener {
+	private static final double SQRT_HALF = Math.sqrt(0.5);
+
 	InputInGame(BlockDodgePanel panel) {
 		super(panel);
 	}
 
 	@Override
-	public synchronized Vector2d getMovement() {
+	public synchronized Point2D move(PlayerDodgeShape player) {
 		boolean left = panel.keys.isPressed(KeyEvent.VK_LEFT);
 		boolean right = panel.keys.isPressed(KeyEvent.VK_RIGHT);
 		boolean up = panel.keys.isPressed(KeyEvent.VK_UP);
 		boolean down = panel.keys.isPressed(KeyEvent.VK_DOWN);
 
-		Vector2d movement = new Vector2d(left == right ? 0 : left ? -1 : 1, up == down ? 0 : up ? -1 : 1);
-		// "Cannot normalize the zero vector"
-		if (!movement.equals(Vector2d.ZERO)) {
-			movement = movement.normalize();
+		double move = left != right && up != down ? SQRT_HALF : 1;
+		double x = player.getX();
+		if (left && !right) {
+			x -= move;
+		} else if (right && !left) {
+			x += move;
 		}
-		return movement;
+		double y = player.getY();
+		if (up && !down) {
+			y -= move;
+		} else if (down && !up) {
+			y += move;
+		}
+		return new Point2D.Double(x, y);
 	}
 
 	@Override

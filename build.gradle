@@ -10,11 +10,9 @@ buildscript {
 	repositories {
 		mavenCentral()
 		mavenLocal()
-		jcenter()
 	}
 	dependencies {
 		classpath 'nl.javadude.gradle.plugins:license-gradle-plugin:0.10.0'
-        classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.2'
 	}
 }
 apply plugin: 'license'
@@ -41,15 +39,3 @@ targetCompatibility = '1.8'
 apply plugin: 'application'
 mainClassName = 'jbyoshi.blockdodge.gui.BlockDodge'
 jar{manifest{attributes('Main-Class': mainClassName)}}
-
-apply plugin: 'com.github.johnrengelman.shadow'
-build.dependsOn shadowJar
-
-dependencies {
-    compile 'com.flowpowered:flow-math:1.0.1'
-}
-
-repositories {
-    mavenLocal()
-    jcenter()
-}

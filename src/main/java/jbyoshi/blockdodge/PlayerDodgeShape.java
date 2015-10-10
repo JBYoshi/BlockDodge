@@ -16,9 +16,7 @@
 package jbyoshi.blockdodge;
 
 import java.awt.*;
-
-import com.flowpowered.math.*;
-import com.flowpowered.math.vector.*;
+import java.awt.geom.*;
 
 public final class PlayerDodgeShape extends DodgeShape {
 	private static final Color COLOR = Color.WHITE;
@@ -32,9 +30,18 @@ public final class PlayerDodgeShape extends DodgeShape {
 
 	@Override
 	public void move() {
-		Vector2d movement = controller.getMovement();
-		setX(GenericMath.clamp(getX() + movement.getX(), 0, game.getWidth() - getWidth()));
-		setY(GenericMath.clamp(getY() + movement.getY(), 0, game.getHeight() - getHeight()));
+		Point2D movement = controller.move(this);
+		setX(clamp(getX() + movement.getX(), 0, game.getWidth() - getWidth()));
+		setY(clamp(getY() + movement.getY(), 0, game.getHeight() - getHeight()));
+	}
+
+	private static double clamp(double val, double min, double max) {
+		if (val < min) {
+			val = min;
+		} else if (val > max) {
+			val = max;
+		}
+		return val;
 	}
 
 	void reset() {
