@@ -21,7 +21,7 @@ import java.awt.event.*;
 final class InputPauseMenu extends Input {
 	private final Component pauseMenu;
 
-	public InputPauseMenu(BlockDodge panel, Component pauseMenu) {
+	public InputPauseMenu(BlockDodgePanel panel, Component pauseMenu) {
 		super(panel);
 		this.pauseMenu = pauseMenu;
 	}

@@ -1,136 +1,13 @@
-/*
- * Copyright (c) 2015 JBYoshi
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package jbyoshi.blockdodge.gui;
 
 import java.awt.*;
-import java.awt.image.*;
 import java.util.*;
 import java.util.prefs.*;
 
 import javax.swing.*;
 
-import jbyoshi.blockdodge.*;
-import jbyoshi.blockdodge.util.*;
-
-public final class BlockDodge extends JPanel {
+public final class BlockDodge {
 	private static final String COPYRIGHT_TEXT = "Copyright 2015 JBYoshi        github.com/JBYoshi/BlockDodge";
-	private static final long serialVersionUID = 2675582657135016482L;
-	private boolean isHighScore = false;
-	final JFrame frame;
-	private final JComponent pauseScreen = Box.createVerticalBox();
-	private volatile BufferedImage buffer;
-	private final BlockDodgeGame game = new BlockDodgeGame() {
-
-		@Override
-		protected void updatePaused(boolean paused) {
-			setInput(paused ? inputPauseMenu : inputInGame);
-		}
-
-		@Override
-		protected void update() {
-			BufferedImage buffer = new BufferedImage(Math.max(1, getWidth()), Math.max(1, getHeight()),
-					BufferedImage.TYPE_INT_RGB);
-			Graphics2D g = buffer.createGraphics();
-
-			g.setColor(Color.BLACK);
-			g.fillRect(0, 0, buffer.getWidth(), buffer.getHeight());
-
-			for (DodgeShape shape : getShapes()) {
-				g.setColor(shape.getColor());
-				g.fill(shape.getShape());
-			}
-
-			g.setColor(Color.WHITE);
-			g.setFont(g.getFont().deriveFont(20.0f));
-			try {
-				int highScore = HighScores.getHighScore();
-				String highScoreText = "High Score: " + highScore;
-				g.drawString(highScoreText, getWidth() - 50 - g.getFontMetrics().stringWidth(highScoreText), 50);
-				if (getScore() >= highScore + 1) {
-					isHighScore = true;
-				}
-				if (isHighScore) {
-					g.setColor(Color.YELLOW);
-				}
-			} catch (BackingStoreException e) {
-				e.printStackTrace();
-			}
-			g.drawString("Score: " + getScore(), 50, 50);
-			g.dispose();
-
-			BlockDodge.this.buffer = buffer;
-			BlockDodge.this.repaint();
-			BlockDodge.this.requestFocusInWindow();
-		}
-
-		@Override
-		protected Dimension calculateSize() {
-			return getSize();
-		}
-	};
-	final PlayerDodgeShape player;
-	private final InputMainMenu inputMainMenu;
-	private final InputInGame inputInGame;
-	private final InputPauseMenu inputPauseMenu;
-	private Input input;
-	final KeyTracker keys = new KeyTracker();
-
-	public BlockDodge(JFrame frame, Component mainMenu) {
-		this.frame = frame;
-
-		inputMainMenu = new InputMainMenu(this, mainMenu);
-		inputInGame = new InputInGame(this);
-		inputPauseMenu = new InputPauseMenu(this, pauseScreen);
-		player = new PlayerDodgeShape(game, inputInGame);
-		setInput(inputMainMenu);
-		addKeyListener(keys);
-
-		setLayout(new BorderLayout());
-		pauseScreen.setVisible(false);
-		add(pauseScreen);
-		pauseScreen.add(Box.createVerticalGlue());
-		pauseScreen.add(label("Paused"));
-		pauseScreen.add(Box.createVerticalStrut(32));
-		pauseScreen.add(label("Press Escape, Space or Enter to continue."));
-		pauseScreen.add(label("Press Delete to exit."));
-		pauseScreen.add(Box.createVerticalGlue());
-	}
-
-	public BlockDodgeGame getGame() {
-		return game;
-	}
-
-	public void reset() {
-		isHighScore = false;
-	}
-
-	@Override
-	public void paintComponent(Graphics g) {
-		if (buffer != null) {
-			g.drawImage(buffer, 0, 0, null);
-		}
-	}
-
-	void setInput(Input input) {
-		if (this.input != null) {
-			this.input.deactivate();
-		}
-		input.activate();
-		this.input = input;
-	}
 
 	public static void main(String[] args) {
 		Box info = Box.createVerticalBox();
@@ -151,14 +28,25 @@ public final class BlockDodge extends JPanel {
 		infoContainer.add(info);
 		infoContainer.add(Box.createHorizontalGlue());
 
+		Box pauseScreen = Box.createVerticalBox();
+		pauseScreen.setVisible(false);
+		pauseScreen.add(Box.createVerticalGlue());
+		pauseScreen.add(label("Paused"));
+		pauseScreen.add(Box.createVerticalStrut(32));
+		pauseScreen.add(label("Press Escape, Space or Enter to continue."));
+		pauseScreen.add(label("Press Delete to exit."));
+		pauseScreen.add(Box.createVerticalGlue());
+
 		JFrame frame = new JFrame("Block Dodge");
 		frame.setIconImages(Arrays.asList(loadIcon(16), loadIcon(32), loadIcon(64), loadIcon(128), loadIcon(256)));
 		frame.enableInputMethods(false);
 
-		final BlockDodge panel = new BlockDodge(frame, infoContainer);
+		final BlockDodgePanel panel = new BlockDodgePanel(frame, infoContainer, pauseScreen);
+		frame.setGlassPane(infoContainer);
+		panel.setLayout(new BorderLayout());
+		panel.add(pauseScreen);
 
 		frame.setContentPane(panel);
-		frame.setGlassPane(infoContainer);
 		frame.setSize(800, 600);
 		frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		frame.setVisible(true);
@@ -196,7 +84,7 @@ public final class BlockDodge extends JPanel {
 	}
 
 	private static Image loadIcon(int size) {
-		return Toolkit.getDefaultToolkit().getImage(BlockDodge.class.getResource("icon-" + size + ".png"));
+		return Toolkit.getDefaultToolkit().getImage(BlockDodgePanel.class.getResource("icon-" + size + ".png"));
 	}
 
 	private static JLabel label(String text) {
@@ -211,4 +99,5 @@ public final class BlockDodge extends JPanel {
 		label.setFont(label.getFont().deriveFont(size));
 		return label;
 	}
+
 }

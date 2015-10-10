@@ -23,7 +23,7 @@ import javax.swing.*;
 final class InputMainMenu extends Input {
 	private final Component info;
 
-	public InputMainMenu(BlockDodge panel, Component info) {
+	public InputMainMenu(BlockDodgePanel panel, Component info) {
 		super(panel);
 		this.info = info;
 	}

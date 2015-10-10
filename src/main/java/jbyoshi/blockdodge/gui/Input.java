@@ -20,10 +20,10 @@ import java.awt.event.*;
 import jbyoshi.blockdodge.*;
 
 abstract class Input implements KeyListener {
-	final BlockDodge panel;
+	final BlockDodgePanel panel;
 	final BlockDodgeGame game;
 
-	Input(BlockDodge panel) {
+	Input(BlockDodgePanel panel) {
 		this.panel = panel;
 		this.game = panel.getGame();
 	}

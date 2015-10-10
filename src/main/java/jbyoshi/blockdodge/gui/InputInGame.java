@@ -22,7 +22,7 @@ import com.flowpowered.math.vector.*;
 import jbyoshi.blockdodge.*;
 
 final class InputInGame extends Input implements PlayerController, FocusListener {
-	InputInGame(BlockDodge panel) {
+	InputInGame(BlockDodgePanel panel) {
 		super(panel);
 	}
 
