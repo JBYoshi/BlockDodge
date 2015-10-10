@@ -20,21 +20,12 @@ import java.awt.event.*;
 
 import javax.swing.*;
 
-import jbyoshi.blockdodge.*;
-
-public final class InputMainMenu implements Input, KeyListener {
-	private final BlockDodge panel;
+final class InputMainMenu extends Input {
 	private final Component info;
-	private final BlockDodgeGame game;
 
 	public InputMainMenu(BlockDodge panel, Component info) {
-		this.panel = panel;
-		this.game = panel.getGame();
+		super(panel);
 		this.info = info;
-	}
-
-	@Override
-	public void keyTyped(KeyEvent e) {
 	}
 
 	@Override
@@ -63,18 +54,14 @@ public final class InputMainMenu implements Input, KeyListener {
 	}
 
 	@Override
-	public void keyReleased(KeyEvent e) {
-	}
-
-	@Override
-	public void activate() {
-		panel.addKeyListener(this);
+	void activate() {
+		super.activate();
 		info.setVisible(true);
 	}
 
 	@Override
-	public void deactivate() {
-		panel.removeKeyListener(this);
+	void deactivate() {
+		super.deactivate();
 		info.setVisible(false);
 	}
 

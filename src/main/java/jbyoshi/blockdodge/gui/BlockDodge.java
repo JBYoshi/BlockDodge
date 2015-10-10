@@ -23,6 +23,7 @@ import java.util.prefs.*;
 import javax.swing.*;
 
 import jbyoshi.blockdodge.*;
+import jbyoshi.blockdodge.util.*;
 
 public final class BlockDodge extends JPanel {
 	private static final String COPYRIGHT_TEXT = "Copyright 2015 JBYoshi        github.com/JBYoshi/BlockDodge";
@@ -85,6 +86,7 @@ public final class BlockDodge extends JPanel {
 	private final InputInGame inputInGame;
 	private final InputPauseMenu inputPauseMenu;
 	private Input input;
+	final KeyTracker keys = new KeyTracker();
 
 	public BlockDodge(JFrame frame, Component mainMenu) {
 		this.frame = frame;
@@ -94,6 +96,7 @@ public final class BlockDodge extends JPanel {
 		inputPauseMenu = new InputPauseMenu(this, pauseScreen);
 		player = new PlayerDodgeShape(game, inputInGame);
 		setInput(inputMainMenu);
+		addKeyListener(keys);
 
 		setLayout(new BorderLayout());
 		pauseScreen.setVisible(false);

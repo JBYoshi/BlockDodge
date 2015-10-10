@@ -21,18 +21,18 @@ import com.flowpowered.math.vector.*;
 
 import jbyoshi.blockdodge.*;
 
-public final class InputInGame implements Input, PlayerController, KeyListener, FocusListener {
-	private final BlockDodge panel;
-	private final BlockDodgeGame game;
-	private volatile boolean up, down, left, right;
-
-	public InputInGame(BlockDodge panel) {
-		this.panel = panel;
-		this.game = panel.getGame();
+final class InputInGame extends Input implements PlayerController, FocusListener {
+	InputInGame(BlockDodge panel) {
+		super(panel);
 	}
 
 	@Override
 	public synchronized Vector2d getMovement() {
+		boolean left = panel.keys.isPressed(KeyEvent.VK_LEFT);
+		boolean right = panel.keys.isPressed(KeyEvent.VK_RIGHT);
+		boolean up = panel.keys.isPressed(KeyEvent.VK_UP);
+		boolean down = panel.keys.isPressed(KeyEvent.VK_DOWN);
+
 		Vector2d movement = new Vector2d(left == right ? 0 : left ? -1 : 1, up == down ? 0 : up ? -1 : 1);
 		// "Cannot normalize the zero vector"
 		if (!movement.equals(Vector2d.ZERO)) {
@@ -42,26 +42,10 @@ public final class InputInGame implements Input, PlayerController, KeyListener, 
 	}
 
 	@Override
-	public void keyTyped(KeyEvent e) {
-	}
-
-	@Override
-	public synchronized void keyPressed(KeyEvent e) {
+	public void keyPressed(KeyEvent e) {
 		switch (e.getKeyCode()) {
-		case KeyEvent.VK_UP:
-			up = true;
-			break;
-		case KeyEvent.VK_DOWN:
-			down = true;
-			break;
-		case KeyEvent.VK_LEFT:
-			left = true;
-			break;
-		case KeyEvent.VK_RIGHT:
-			right = true;
-			break;
 		case KeyEvent.VK_ESCAPE:
-			game.addTask(() -> game.setPaused(true));
+			game.setPaused(true);
 			break;
 		case KeyEvent.VK_DELETE:
 			game.addTask(() -> panel.player.explode());
@@ -70,31 +54,15 @@ public final class InputInGame implements Input, PlayerController, KeyListener, 
 	}
 
 	@Override
-	public void keyReleased(KeyEvent e) {
-		switch (e.getKeyCode()) {
-		case KeyEvent.VK_UP:
-			up = false;
-			break;
-		case KeyEvent.VK_DOWN:
-			down = false;
-			break;
-		case KeyEvent.VK_LEFT:
-			left = false;
-			break;
-		case KeyEvent.VK_RIGHT:
-			right = false;
-			break;
-		}
-	}
-
-	@Override
 	public void activate() {
-		panel.addKeyListener(this);
+		super.activate();
+		panel.addFocusListener(this);
 	}
 
 	@Override
 	public void deactivate() {
-		panel.removeKeyListener(this);
+		super.deactivate();
+		panel.removeFocusListener(this);
 	}
 
 	@Override

@@ -18,33 +18,24 @@ package jbyoshi.blockdodge.gui;
 import java.awt.*;
 import java.awt.event.*;
 
-import jbyoshi.blockdodge.*;
-
-public final class InputPauseMenu implements Input, KeyListener {
-	private final BlockDodge panel;
-	private final BlockDodgeGame game;
+final class InputPauseMenu extends Input {
 	private final Component pauseMenu;
 
 	public InputPauseMenu(BlockDodge panel, Component pauseMenu) {
-		this.panel = panel;
-		this.game = panel.getGame();
+		super(panel);
 		this.pauseMenu = pauseMenu;
 	}
 
 	@Override
 	public void activate() {
-		panel.addKeyListener(this);
+		super.activate();
 		pauseMenu.setVisible(true);
 	}
 
 	@Override
-	public void deactivate() {
-		panel.removeKeyListener(this);
+	void deactivate() {
+		super.deactivate();
 		pauseMenu.setVisible(false);
-	}
-
-	@Override
-	public void keyTyped(KeyEvent e) {
 	}
 
 	@Override
@@ -59,10 +50,6 @@ public final class InputPauseMenu implements Input, KeyListener {
 			game.addTask(() -> panel.player.explode());
 			break;
 		}
-	}
-
-	@Override
-	public void keyReleased(KeyEvent e) {
 	}
 
 }
