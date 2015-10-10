@@ -50,6 +50,10 @@ final class InputMainMenu extends Input {
 			}
 			frame.revalidate();
 			break;
+		case KeyEvent.VK_DELETE:
+			// The End
+			System.exit(0);
+			break;
 		}
 	}
 
