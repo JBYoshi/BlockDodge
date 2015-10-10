@@ -21,7 +21,7 @@ import com.flowpowered.math.vector.*;
 
 import jbyoshi.blockdodge.*;
 
-public final class InputInGame implements Input, PlayerController, KeyListener {
+public final class InputInGame implements Input, PlayerController, KeyListener, FocusListener {
 	private final BlockDodge panel;
 	private final BlockDodgeGame game;
 	private volatile boolean up, down, left, right;
@@ -95,6 +95,15 @@ public final class InputInGame implements Input, PlayerController, KeyListener {
 	@Override
 	public void deactivate() {
 		panel.removeKeyListener(this);
+	}
+
+	@Override
+	public void focusGained(FocusEvent e) {
+	}
+
+	@Override
+	public void focusLost(FocusEvent e) {
+		game.addTask(() -> game.setPaused(true));
 	}
 
 }
