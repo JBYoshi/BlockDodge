@@ -17,9 +17,12 @@ package jbyoshi.blockdodge.gui;
 
 import java.awt.*;
 import java.util.*;
+import java.util.concurrent.*;
 import java.util.prefs.*;
 
 import javax.swing.*;
+
+import jbyoshi.blockdodge.updater.*;
 
 public final class BlockDodge {
 	private static final String COPYRIGHT_TEXT = "Copyright 2015 JBYoshi        github.com/JBYoshi/BlockDodge";
@@ -52,7 +55,7 @@ public final class BlockDodge {
 		pauseScreen.add(label("Press Delete to exit."));
 		pauseScreen.add(Box.createVerticalGlue());
 
-		JFrame frame = new JFrame("Block Dodge");
+		JFrame frame = new JFrame("Block Dodge " + Updater.getCurrentVersion());
 		frame.setIconImages(Arrays.asList(loadIcon(16), loadIcon(32), loadIcon(64), loadIcon(128), loadIcon(256)));
 		frame.enableInputMethods(false);
 
@@ -65,6 +68,44 @@ public final class BlockDodge {
 		frame.setSize(800, 600);
 		frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		frame.setVisible(true);
+
+		if (Updater.isEnabled()) {
+			new Thread(() -> {
+				Optional<Version> update = Optional.empty();
+				while (true) {
+					try {
+						update = Updater.findUpdate();
+					} catch (Exception e) {
+						JOptionPane.showMessageDialog(frame, e, "Updater error", JOptionPane.ERROR_MESSAGE);
+						e.printStackTrace();
+					}
+					if (update.isPresent()) {
+						String name = update.get().getName();
+						if (JOptionPane.showConfirmDialog(frame,
+								new Object[] { "Update available!", name, "Download?" }, "BlockDodge",
+								JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE) == JOptionPane.YES_OPTION) {
+							try {
+								update.get().open();
+							} catch (Exception e) {
+								JOptionPane
+								.showMessageDialog(frame,
+										new Object[] { "Could not open update in your browser.",
+												new JTextField(update.get().getURL()) },
+										"Update", JOptionPane.ERROR_MESSAGE);
+							}
+						}
+					} else {
+						System.out.println("No updates available");
+					}
+					try {
+						Thread.sleep(TimeUnit.MINUTES.toMillis(10));
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+
+			} , "Updater").start();
+		}
 
 		while (true) {
 			// Start screen
