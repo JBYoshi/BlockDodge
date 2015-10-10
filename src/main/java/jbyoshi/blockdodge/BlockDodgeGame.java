@@ -19,14 +19,16 @@ import java.awt.*;
 import java.util.*;
 import java.util.concurrent.atomic.*;
 
-public abstract class BlockDodgeGame {
+import jbyoshi.blockdodge.util.*;
+import jbyoshi.blockdodge.util.TaskQueue;
 
+public abstract class BlockDodgeGame {
 	final Random rand = new Random();
 	private static final int FRAME_TIME = 1000 / 75;
 	private Dimension size = new Dimension(0, 0);
 	private final Set<DodgeShape> shapes = new HashSet<DodgeShape>();
-	private final PlayerDodgeShape player = new PlayerDodgeShape(this);
-	private final AtomicBoolean stop = new AtomicBoolean(false);
+	private final AtomicBoolean stop = new AtomicBoolean(false), pause = new AtomicBoolean(false);
+	private final TaskQueue tasks = new TaskQueue();
 	private volatile double score;
 	private static final RandomChooser<Color> COLORS = new RandomChooser<>(Color.BLUE, Color.CYAN, Color.GREEN,
 			Color.MAGENTA, new Color(255, 127, 0), new Color(0, 140, 0), Color.RED, Color.YELLOW);
@@ -46,12 +48,8 @@ public abstract class BlockDodgeGame {
 		return shapes.contains(shape);
 	}
 
-	public PlayerDodgeShape getPlayer() {
-		return player;
-	}
-
-	public void go(boolean includePlayer) {
-		if (includePlayer) {
+	public void go(PlayerDodgeShape player) {
+		if (player != null) {
 			shapes.clear();
 			player.reset();
 			shapes.add(player);
@@ -63,6 +61,12 @@ public abstract class BlockDodgeGame {
 
 		stop.set(false);
 		while (!stop.get()) {
+			while (pause.get()) {
+				try {
+					Thread.sleep(10);
+				} catch (InterruptedException e) {
+				}
+			}
 			long start = System.currentTimeMillis();
 
 			Dimension newSize = calculateSize();
@@ -99,14 +103,16 @@ public abstract class BlockDodgeGame {
 			}
 
 			if (timer % 12 == 0) {
-				createShape(includePlayer, timer);
+				createShape(player != null, timer);
 			}
 
 			if (contains(player)) {
 				score += 250000.0 / getWidth() / getHeight();
 			}
 
-			paint(includePlayer);
+			tasks.runAll();
+
+			update();
 
 			timer++;
 			long sleep = FRAME_TIME - (System.currentTimeMillis() - start);
@@ -183,9 +189,22 @@ public abstract class BlockDodgeGame {
 		return Collections.unmodifiableSet(shapes);
 	}
 
+	public void addTask(Runnable task) {
+		tasks.add(task);
+	}
+
+	public boolean isPaused() {
+		return pause.get();
+	}
+
+	public void setPaused(boolean paused) {
+		pause.set(paused);
+		updatePaused(paused);
+	}
+
 	protected abstract Dimension calculateSize();
 
 	protected abstract void updatePaused(boolean paused);
 
-	protected abstract void paint(boolean hasPlayer);
+	protected abstract void update();
 }

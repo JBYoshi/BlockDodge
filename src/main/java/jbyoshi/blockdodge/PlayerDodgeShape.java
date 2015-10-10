@@ -16,125 +16,42 @@
 package jbyoshi.blockdodge;
 
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.geom.*;
 
-public final class PlayerDodgeShape extends DodgeShape implements KeyListener, FocusListener {
+public final class PlayerDodgeShape extends DodgeShape {
 	private static final Color COLOR = Color.WHITE;
 	private static final int SIZE = 32;
-	private volatile boolean up, down, left, right, quit, pause;
-	private static final double SQRT_HALF = Math.sqrt(0.5);
+	private final PlayerController controller;
 
-	PlayerDodgeShape(BlockDodgeGame game) {
+	public PlayerDodgeShape(BlockDodgeGame game, PlayerController controller) {
 		super(game, 0, 0, SIZE, SIZE, COLOR);
+		this.controller = controller;
 	}
 
 	@Override
 	public void move() {
-		while (pause) {
-			try {
-				Thread.sleep(10);
-			} catch (InterruptedException e) {
-			}
+		Point2D movement = controller.move(this);
+		setX(clamp(movement.getX(), 0, game.getWidth() - getWidth()));
+		setY(clamp(movement.getY(), 0, game.getHeight() - getHeight()));
+	}
+
+	private static double clamp(double val, double min, double max) {
+		if (val < min) {
+			val = min;
+		} else if (val > max) {
+			val = max;
 		}
-		if (quit) {
-			explode();
-			return;
-		}
-		double move = left != right && up != down ? SQRT_HALF : 1;
-		if (left && getX() >= move) {
-			setX(getX() - move);
-		}
-		if (right && getX() < game.getWidth() - getWidth() - move) {
-			setX(getX() + move);
-		}
-		if (up && getY() >= move) {
-			setY(getY() - move);
-		}
-		if (down && getY() < game.getHeight() - getHeight() - move) {
-			setY(getY() + move);
-		}
+		return val;
 	}
 
 	void reset() {
-		pause = false;
-		quit = false;
 		setX(game.getWidth() / 2 - getWidth() / 2);
 		setY(game.getHeight() / 2 - getHeight() / 2);
 	}
 
 	@Override
-	void onRemoved() {
+	protected void onRemoved() {
 		game.stop();
-	}
-
-	@Override
-	public void keyTyped(KeyEvent e) {
-	}
-
-	@Override
-	public void keyPressed(KeyEvent e) {
-		switch (e.getKeyCode()) {
-		case KeyEvent.VK_UP:
-			up = true;
-			break;
-		case KeyEvent.VK_DOWN:
-			down = true;
-			break;
-		case KeyEvent.VK_LEFT:
-			left = true;
-			break;
-		case KeyEvent.VK_RIGHT:
-			right = true;
-			break;
-		case KeyEvent.VK_SPACE:
-		case KeyEvent.VK_ENTER:
-			setPaused(false);
-			break;
-		case KeyEvent.VK_ESCAPE:
-			setPaused(!pause);
-			break;
-		case KeyEvent.VK_DELETE:
-			synchronized (this) {
-				quit = true;
-				setPaused(false);
-				break;
-			}
-		}
-	}
-
-	@Override
-	public void keyReleased(KeyEvent e) {
-		switch (e.getKeyCode()) {
-		case KeyEvent.VK_UP:
-			up = false;
-			break;
-		case KeyEvent.VK_DOWN:
-			down = false;
-			break;
-		case KeyEvent.VK_LEFT:
-			left = false;
-			break;
-		case KeyEvent.VK_RIGHT:
-			right = false;
-			break;
-		}
-	}
-
-	private synchronized void setPaused(boolean paused) {
-		if (!game.contains(this)) {
-			paused = false;
-		}
-		pause = paused;
-		game.updatePaused(paused);
-	}
-
-	@Override
-	public void focusGained(FocusEvent e) {
-	}
-
-	@Override
-	public void focusLost(FocusEvent e) {
-		setPaused(true);
 	}
 
 }
