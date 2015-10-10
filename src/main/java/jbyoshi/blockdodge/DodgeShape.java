@@ -36,9 +36,8 @@ public abstract class DodgeShape {
 	protected abstract void move();
 
 	public void explode() {
-		// Subtract 1 so tiny drops don't lag out the game.
-		int width = (int) shape.getWidth() - 1;
-		int height = (int) shape.getHeight() - 1;
+		int width = (int) shape.getWidth();
+		int height = (int) shape.getHeight();
 		if (width <= 0 || height <= 0) {
 			// No room to explode. Just cancel.
 			game.remove(this);
@@ -117,7 +116,7 @@ public abstract class DodgeShape {
 		@Override
 		public void move() {
 			super.move();
-			if (++time % 12 == 0) {
+			if (++time % 5 == 0) {
 				if (getWidth() == 0 && getHeight() == 0) {
 					game.remove(this);
 					return;
@@ -147,6 +146,11 @@ public abstract class DodgeShape {
 
 		private DodgeShape outer() {
 			return DodgeShape.this;
+		}
+
+		@Override
+		public void explode() {
+			game.remove(this);
 		}
 
 		@Override
