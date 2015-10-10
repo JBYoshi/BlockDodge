@@ -30,6 +30,7 @@ public final class InputPauseMenu implements Input, KeyListener {
 		this.game = panel.getGame();
 		this.pauseMenu = pauseMenu;
 	}
+
 	@Override
 	public void activate() {
 		panel.addKeyListener(this);
@@ -53,6 +54,9 @@ public final class InputPauseMenu implements Input, KeyListener {
 		case KeyEvent.VK_ENTER:
 		case KeyEvent.VK_ESCAPE:
 			game.setPaused(false);
+			break;
+		case KeyEvent.VK_DELETE:
+			game.addTask(() -> panel.player.explode());
 			break;
 		}
 	}

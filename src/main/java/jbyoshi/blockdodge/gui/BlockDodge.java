@@ -80,7 +80,7 @@ public final class BlockDodge extends JPanel {
 			return getSize();
 		}
 	};
-	private final PlayerDodgeShape player;
+	final PlayerDodgeShape player;
 	private final InputMainMenu inputMainMenu;
 	private final InputInGame inputInGame;
 	private final InputPauseMenu inputPauseMenu;

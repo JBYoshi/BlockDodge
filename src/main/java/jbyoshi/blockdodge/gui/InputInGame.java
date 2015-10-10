@@ -61,7 +61,10 @@ public final class InputInGame implements Input, PlayerController, KeyListener {
 			right = true;
 			break;
 		case KeyEvent.VK_ESCAPE:
-			game.addTask(() -> game.setPaused(!game.isPaused()));
+			game.addTask(() -> game.setPaused(true));
+			break;
+		case KeyEvent.VK_DELETE:
+			game.addTask(() -> panel.player.explode());
 			break;
 		}
 	}
