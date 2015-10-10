@@ -44,6 +44,8 @@ jar{manifest{attributes('Main-Class': mainClassName)}}
 
 apply plugin: 'com.github.johnrengelman.shadow'
 build.dependsOn shadowJar
+shadowJar.dependsOn jar
+shadowJar.classifier = ''
 
 dependencies {
     compile 'com.google.code.gson:gson:2.4'
