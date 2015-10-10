@@ -31,8 +31,8 @@ public final class PlayerDodgeShape extends DodgeShape {
 	@Override
 	public void move() {
 		Point2D movement = controller.move(this);
-		setX(clamp(getX() + movement.getX(), 0, game.getWidth() - getWidth()));
-		setY(clamp(getY() + movement.getY(), 0, game.getHeight() - getHeight()));
+		setX(clamp(movement.getX(), 0, game.getWidth() - getWidth()));
+		setY(clamp(movement.getY(), 0, game.getHeight() - getHeight()));
 	}
 
 	private static double clamp(double val, double min, double max) {
