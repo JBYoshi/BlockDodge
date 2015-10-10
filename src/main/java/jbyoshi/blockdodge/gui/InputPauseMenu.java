@@ -48,6 +48,7 @@ final class InputPauseMenu extends Input {
 			break;
 		case KeyEvent.VK_DELETE:
 			game.addTask(() -> panel.player.explode());
+			game.setPaused(false);
 			break;
 		}
 	}
