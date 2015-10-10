@@ -27,7 +27,7 @@ final class InputPauseMenu extends Input {
 	}
 
 	@Override
-	public void activate() {
+	void activate() {
 		super.activate();
 		pauseMenu.setVisible(true);
 	}

@@ -54,13 +54,13 @@ final class InputInGame extends Input implements PlayerController, FocusListener
 	}
 
 	@Override
-	public void activate() {
+	void activate() {
 		super.activate();
 		panel.addFocusListener(this);
 	}
 
 	@Override
-	public void deactivate() {
+	void deactivate() {
 		super.deactivate();
 		panel.removeFocusListener(this);
 	}
