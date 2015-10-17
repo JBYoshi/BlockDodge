@@ -15,16 +15,41 @@
  */
 package jbyoshi.blockdodge.gui;
 
+import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.*;
+import java.awt.image.*;
 
 import jbyoshi.blockdodge.*;
 
 final class InputInGame extends Input implements PlayerController, FocusListener {
 	private static final double SQRT_HALF = Math.sqrt(0.5);
+	private final Cursor cursor;
+	private final Robot robot;
+	private boolean shouldMoveMouse;
 
 	InputInGame(BlockDodgePanel panel) {
 		super(panel);
+		Robot robot = null;
+		try {
+			robot = new Robot(panel.frame.getGraphicsConfiguration().getDevice());
+		} catch (AWTException e) {
+			e.printStackTrace();
+		}
+		this.robot = robot;
+
+		BufferedImage image = new BufferedImage(PlayerDodgeShape.SIZE, PlayerDodgeShape.SIZE,
+				BufferedImage.TYPE_INT_ARGB);
+		Graphics2D g = image.createGraphics();
+		g.setColor(PlayerDodgeShape.COLOR);
+		final int s = PlayerDodgeShape.SIZE;
+		g.fillRect(0, 0, s, 1);
+		g.fillRect(0, 0, 1, s);
+		g.fillRect(s - 1, 0, s, s);
+		g.fillRect(0, s - 1, s, s);
+		g.dispose();
+		this.cursor = Toolkit.getDefaultToolkit().createCustomCursor(image,
+				new Point(PlayerDodgeShape.SIZE / 2, PlayerDodgeShape.SIZE / 2), "Player");
 	}
 
 	@Override
@@ -34,20 +59,44 @@ final class InputInGame extends Input implements PlayerController, FocusListener
 		boolean up = panel.keys.isPressed(KeyEvent.VK_UP);
 		boolean down = panel.keys.isPressed(KeyEvent.VK_DOWN);
 
-		double move = left != right && up != down ? SQRT_HALF : 1;
-		double x = player.getX();
-		if (left && !right) {
-			x -= move;
-		} else if (right && !left) {
-			x += move;
+		if (left || right || up || down) {
+			double move = left != right && up != down ? SQRT_HALF : 1;
+			double x = player.getX();
+			if (left && !right) {
+				x -= move;
+			} else if (right && !left) {
+				x += move;
+			}
+			double y = player.getY();
+			if (up && !down) {
+				y -= move;
+			} else if (down && !up) {
+				y += move;
+			}
+
+			moveMouse(player);
+			return new Point2D.Double(x, y);
 		}
-		double y = player.getY();
-		if (up && !down) {
-			y -= move;
-		} else if (down && !up) {
-			y += move;
+
+		if (shouldMoveMouse) {
+			moveMouse(player);
+			return new Point2D.Double(player.getX(), player.getY());
 		}
-		return new Point2D.Double(x, y);
+
+		Point2D startLoc = new Point2D.Double(player.getX(), player.getY());
+		Point2D endLoc = panel.getMousePosition();
+		if (endLoc == null) {
+			return new Point2D.Double(player.getX(), player.getY());
+		}
+		endLoc = new Point2D.Double(endLoc.getX() - player.getWidth() / 2, endLoc.getY() - player.getHeight() / 2);
+		Point2D difference = new Point2D.Double(endLoc.getX() - startLoc.getX(), endLoc.getY() - startLoc.getY());
+		if (endLoc.distance(startLoc) <= 1.0) {
+			return endLoc;
+		}
+
+		double length = difference.distance(0, 0);
+		return new Point2D.Double(startLoc.getX() + difference.getX() / length,
+				startLoc.getY() + difference.getY() / length);
 	}
 
 	@Override
@@ -66,12 +115,16 @@ final class InputInGame extends Input implements PlayerController, FocusListener
 	void activate() {
 		super.activate();
 		panel.addFocusListener(this);
+		panel.setCursor(cursor);
+
+		shouldMoveMouse = true;
 	}
 
 	@Override
 	void deactivate() {
 		super.deactivate();
 		panel.removeFocusListener(this);
+		panel.setCursor(panel.getParent().getCursor());
 	}
 
 	@Override
@@ -81,6 +134,15 @@ final class InputInGame extends Input implements PlayerController, FocusListener
 	@Override
 	public void focusLost(FocusEvent e) {
 		game.addTask(() -> game.setPaused(true));
+	}
+
+	private void moveMouse(PlayerDodgeShape player) {
+		shouldMoveMouse = false;
+		if (robot != null) {
+			Point2D loc = panel.getLocationOnScreen();
+			robot.mouseMove((int) Math.round(player.getX() + loc.getX() + player.getWidth() / 2),
+					(int) Math.round(player.getY() + loc.getY() + player.getHeight() / 2));
+		}
 	}
 
 }
