@@ -33,7 +33,7 @@ public final class BlockDodge {
 		info.add(label("Block Dodge", 32));
 		info.add(Box.createVerticalStrut(32));
 		info.add(label("You are the white box in the center of the screen."));
-		info.add(label("Use the arrow keys to move."));
+		info.add(label("Use your mouse or the arrow keys to move."));
 		info.add(label("Avoid the colored blocks flying at you."));
 		info.add(label("Press Space or Enter to start."));
 		info.add(label("You can press Escape to pause and Delete to quit."));
