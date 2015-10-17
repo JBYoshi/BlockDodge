@@ -15,6 +15,7 @@
  */
 package jbyoshi.blockdodge.gui;
 
+import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.*;
 
@@ -22,9 +23,18 @@ import jbyoshi.blockdodge.*;
 
 final class InputInGame extends Input implements PlayerController, FocusListener {
 	private static final double SQRT_HALF = Math.sqrt(0.5);
+	private final Robot robot;
+	private boolean shouldMoveMouse;
 
 	InputInGame(BlockDodgePanel panel) {
 		super(panel);
+		Robot robot = null;
+		try {
+			robot = new Robot(panel.frame.getGraphicsConfiguration().getDevice());
+		} catch (AWTException e) {
+			e.printStackTrace();
+		}
+		this.robot = robot;
 	}
 
 	@Override
@@ -48,11 +58,21 @@ final class InputInGame extends Input implements PlayerController, FocusListener
 			} else if (down && !up) {
 				y += move;
 			}
+
+			moveMouse(player);
 			return new Point2D.Double(x, y);
+		}
+
+		if (shouldMoveMouse) {
+			moveMouse(player);
+			return new Point2D.Double(player.getX(), player.getY());
 		}
 
 		Point2D startLoc = new Point2D.Double(player.getX(), player.getY());
 		Point2D endLoc = panel.getMousePosition();
+		if (endLoc == null) {
+			return new Point2D.Double(player.getX(), player.getY());
+		}
 		endLoc = new Point2D.Double(endLoc.getX() - player.getWidth() / 2, endLoc.getY() - player.getHeight() / 2);
 		Point2D difference = new Point2D.Double(endLoc.getX() - startLoc.getX(), endLoc.getY() - startLoc.getY());
 		if (endLoc.distance(startLoc) <= 1.0) {
@@ -80,6 +100,8 @@ final class InputInGame extends Input implements PlayerController, FocusListener
 	void activate() {
 		super.activate();
 		panel.addFocusListener(this);
+
+		shouldMoveMouse = true;
 	}
 
 	@Override
@@ -95,6 +117,15 @@ final class InputInGame extends Input implements PlayerController, FocusListener
 	@Override
 	public void focusLost(FocusEvent e) {
 		game.addTask(() -> game.setPaused(true));
+	}
+
+	private void moveMouse(PlayerDodgeShape player) {
+		shouldMoveMouse = false;
+		if (robot != null) {
+			Point2D loc = panel.getLocationOnScreen();
+			robot.mouseMove((int) Math.round(player.getX() + loc.getX() + player.getWidth() / 2),
+					(int) Math.round(player.getY() + loc.getY() + player.getHeight() / 2));
+		}
 	}
 
 }
