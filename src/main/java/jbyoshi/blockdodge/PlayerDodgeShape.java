@@ -19,8 +19,8 @@ import java.awt.*;
 import java.awt.geom.*;
 
 public final class PlayerDodgeShape extends DodgeShape {
-	private static final Color COLOR = Color.WHITE;
-	private static final int SIZE = 32;
+	public static final Color COLOR = Color.WHITE;
+	public static final int SIZE = 32;
 	private final PlayerController controller;
 
 	public PlayerDodgeShape(BlockDodgeGame game, PlayerController controller) {

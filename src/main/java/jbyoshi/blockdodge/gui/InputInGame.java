@@ -18,11 +18,13 @@ package jbyoshi.blockdodge.gui;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.*;
+import java.awt.image.*;
 
 import jbyoshi.blockdodge.*;
 
 final class InputInGame extends Input implements PlayerController, FocusListener {
 	private static final double SQRT_HALF = Math.sqrt(0.5);
+	private final Cursor cursor;
 	private final Robot robot;
 	private boolean shouldMoveMouse;
 
@@ -35,6 +37,19 @@ final class InputInGame extends Input implements PlayerController, FocusListener
 			e.printStackTrace();
 		}
 		this.robot = robot;
+
+		BufferedImage image = new BufferedImage(PlayerDodgeShape.SIZE, PlayerDodgeShape.SIZE,
+				BufferedImage.TYPE_INT_ARGB);
+		Graphics2D g = image.createGraphics();
+		g.setColor(PlayerDodgeShape.COLOR);
+		final int s = PlayerDodgeShape.SIZE;
+		g.fillRect(0, 0, s, 1);
+		g.fillRect(0, 0, 1, s);
+		g.fillRect(s - 1, 0, s, s);
+		g.fillRect(0, s - 1, s, s);
+		g.dispose();
+		this.cursor = Toolkit.getDefaultToolkit().createCustomCursor(image,
+				new Point(PlayerDodgeShape.SIZE / 2, PlayerDodgeShape.SIZE / 2), "Player");
 	}
 
 	@Override
@@ -100,6 +115,7 @@ final class InputInGame extends Input implements PlayerController, FocusListener
 	void activate() {
 		super.activate();
 		panel.addFocusListener(this);
+		panel.setCursor(cursor);
 
 		shouldMoveMouse = true;
 	}
@@ -108,6 +124,7 @@ final class InputInGame extends Input implements PlayerController, FocusListener
 	void deactivate() {
 		super.deactivate();
 		panel.removeFocusListener(this);
+		panel.setCursor(panel.getParent().getCursor());
 	}
 
 	@Override
