@@ -34,20 +34,34 @@ final class InputInGame extends Input implements PlayerController, FocusListener
 		boolean up = panel.keys.isPressed(KeyEvent.VK_UP);
 		boolean down = panel.keys.isPressed(KeyEvent.VK_DOWN);
 
-		double move = left != right && up != down ? SQRT_HALF : 1;
-		double x = player.getX();
-		if (left && !right) {
-			x -= move;
-		} else if (right && !left) {
-			x += move;
+		if (left || right || up || down) {
+			double move = left != right && up != down ? SQRT_HALF : 1;
+			double x = player.getX();
+			if (left && !right) {
+				x -= move;
+			} else if (right && !left) {
+				x += move;
+			}
+			double y = player.getY();
+			if (up && !down) {
+				y -= move;
+			} else if (down && !up) {
+				y += move;
+			}
+			return new Point2D.Double(x, y);
 		}
-		double y = player.getY();
-		if (up && !down) {
-			y -= move;
-		} else if (down && !up) {
-			y += move;
+
+		Point2D startLoc = new Point2D.Double(player.getX(), player.getY());
+		Point2D endLoc = panel.getMousePosition();
+		endLoc = new Point2D.Double(endLoc.getX() - player.getWidth() / 2, endLoc.getY() - player.getHeight() / 2);
+		Point2D difference = new Point2D.Double(endLoc.getX() - startLoc.getX(), endLoc.getY() - startLoc.getY());
+		if (endLoc.distance(startLoc) <= 1.0) {
+			return endLoc;
 		}
-		return new Point2D.Double(x, y);
+
+		double length = difference.distance(0, 0);
+		return new Point2D.Double(startLoc.getX() + difference.getX() / length,
+				startLoc.getY() + difference.getY() / length);
 	}
 
 	@Override
