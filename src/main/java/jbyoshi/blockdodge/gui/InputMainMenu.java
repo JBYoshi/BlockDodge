@@ -21,11 +21,8 @@ import java.awt.event.*;
 import javax.swing.*;
 
 final class InputMainMenu extends Input {
-	private final Component info;
-
-	public InputMainMenu(BlockDodgePanel panel, Component info) {
+	public InputMainMenu(BlockDodgePanel panel) {
 		super(panel);
-		this.info = info;
 	}
 
 	@Override
@@ -58,15 +55,20 @@ final class InputMainMenu extends Input {
 	}
 
 	@Override
-	void activate() {
-		super.activate();
-		info.setVisible(true);
-	}
-
-	@Override
-	void deactivate() {
-		super.deactivate();
-		info.setVisible(false);
+	Component createDisplay() {
+		Box info = Box.createVerticalBox();
+		info.add(Box.createVerticalGlue());
+		info.add(UI.label("Block Dodge", 32));
+		info.add(Box.createVerticalStrut(32));
+		info.add(UI.label("You are the white box in the center of the screen."));
+		info.add(UI.label("Use your mouse or the arrow keys to move."));
+		info.add(UI.label("Avoid the colored blocks flying at you."));
+		info.add(Box.createVerticalStrut(32));
+		info.add(UI.button("Start (Enter)", Color.GREEN, e -> game.stop()));
+		info.add(Box.createVerticalGlue());
+		info.add(UI.label(BlockDodge.COPYRIGHT_TEXT, 10));
+		info.add(Box.createVerticalStrut(50));
+		return info;
 	}
 
 }

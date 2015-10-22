@@ -18,24 +18,11 @@ package jbyoshi.blockdodge.gui;
 import java.awt.*;
 import java.awt.event.*;
 
+import javax.swing.*;
+
 final class InputPauseMenu extends Input {
-	private final Component pauseMenu;
-
-	public InputPauseMenu(BlockDodgePanel panel, Component pauseMenu) {
+	InputPauseMenu(BlockDodgePanel panel) {
 		super(panel);
-		this.pauseMenu = pauseMenu;
-	}
-
-	@Override
-	void activate() {
-		super.activate();
-		pauseMenu.setVisible(true);
-	}
-
-	@Override
-	void deactivate() {
-		super.deactivate();
-		pauseMenu.setVisible(false);
 	}
 
 	@Override
@@ -44,13 +31,34 @@ final class InputPauseMenu extends Input {
 		case KeyEvent.VK_SPACE:
 		case KeyEvent.VK_ENTER:
 		case KeyEvent.VK_ESCAPE:
-			game.setPaused(false);
+			unpause();
 			break;
 		case KeyEvent.VK_DELETE:
-			game.addTask(() -> panel.player.explode());
-			game.setPaused(false);
+			quit();
 			break;
 		}
+	}
+
+	private void unpause() {
+		game.setPaused(false);
+	}
+
+	private void quit() {
+		game.addTask(() -> panel.player.explode());
+		unpause();
+	}
+
+	@Override
+	Component createDisplay() {
+		Box pauseScreen = Box.createVerticalBox();
+		pauseScreen.add(Box.createVerticalGlue());
+		pauseScreen.add(UI.label("Paused"));
+		pauseScreen.add(Box.createVerticalStrut(32));
+		pauseScreen.add(UI.button("Continue (Escape/Space/Enter)", Color.GREEN, e -> unpause()));
+		pauseScreen.add(UI.button("Exit (Delete)", Color.RED, e -> quit()));
+		pauseScreen.add(Box.createVerticalGlue());
+
+		return pauseScreen;
 	}
 
 }

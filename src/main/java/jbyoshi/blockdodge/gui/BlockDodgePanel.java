@@ -33,7 +33,9 @@ public final class BlockDodgePanel extends JPanel {
 
 		@Override
 		protected void updatePaused(boolean paused) {
-			setInput(paused ? inputPauseMenu : inputInGame);
+			SwingUtilities.invokeLater(() -> {
+				setInput(paused ? inputPauseMenu : inputInGame);
+			});
 		}
 
 		@Override
@@ -70,7 +72,7 @@ public final class BlockDodgePanel extends JPanel {
 
 			BlockDodgePanel.this.buffer = buffer;
 			BlockDodgePanel.this.repaint();
-			BlockDodgePanel.this.requestFocusInWindow();
+			frame.requestFocusInWindow();
 		}
 
 		@Override
@@ -85,12 +87,13 @@ public final class BlockDodgePanel extends JPanel {
 	private Input input;
 	final KeyTracker keys = new KeyTracker();
 
-	public BlockDodgePanel(JFrame frame, Component mainMenu, Component pauseMenu) {
+	public BlockDodgePanel(JFrame frame) {
+		super(new BorderLayout());
 		this.frame = frame;
 
-		inputMainMenu = new InputMainMenu(this, mainMenu);
+		inputMainMenu = new InputMainMenu(this);
 		inputInGame = new InputInGame(this);
-		inputPauseMenu = new InputPauseMenu(this, pauseMenu);
+		inputPauseMenu = new InputPauseMenu(this);
 		player = new PlayerDodgeShape(game, inputInGame);
 		setInput(inputMainMenu);
 		addKeyListener(keys);

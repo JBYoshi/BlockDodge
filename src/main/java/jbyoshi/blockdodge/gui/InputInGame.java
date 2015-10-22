@@ -20,6 +20,8 @@ import java.awt.event.*;
 import java.awt.geom.*;
 import java.awt.image.*;
 
+import javax.swing.*;
+
 import jbyoshi.blockdodge.*;
 
 final class InputInGame extends Input implements PlayerController, FocusListener {
@@ -114,7 +116,7 @@ final class InputInGame extends Input implements PlayerController, FocusListener
 	@Override
 	void activate() {
 		super.activate();
-		panel.addFocusListener(this);
+		panel.frame.addFocusListener(this);
 		panel.setCursor(cursor);
 
 		shouldMoveMouse = true;
@@ -123,7 +125,7 @@ final class InputInGame extends Input implements PlayerController, FocusListener
 	@Override
 	void deactivate() {
 		super.deactivate();
-		panel.removeFocusListener(this);
+		panel.frame.removeFocusListener(this);
 		panel.setCursor(panel.getParent().getCursor());
 	}
 
@@ -133,7 +135,7 @@ final class InputInGame extends Input implements PlayerController, FocusListener
 
 	@Override
 	public void focusLost(FocusEvent e) {
-		game.addTask(() -> game.setPaused(true));
+		game.setPaused(true);
 	}
 
 	private void moveMouse(PlayerDodgeShape player) {
@@ -143,6 +145,18 @@ final class InputInGame extends Input implements PlayerController, FocusListener
 			robot.mouseMove((int) Math.round(player.getX() + loc.getX() + player.getWidth() / 2),
 					(int) Math.round(player.getY() + loc.getY() + player.getHeight() / 2));
 		}
+	}
+
+	@Override
+	Component createDisplay() {
+		JPanel panel = new JPanel();
+		panel.setLayout(null);
+		panel.setOpaque(false);
+		JComponent button = UI.button("Pause (Escape)", Color.WHITE, e -> game.setPaused(true));
+		button.setLocation(50, 50 + UI.label("Size test").getPreferredSize().height * 3 / 2);
+		button.setSize(button.getPreferredSize());
+		panel.add(button);
+		return panel;
 	}
 
 }

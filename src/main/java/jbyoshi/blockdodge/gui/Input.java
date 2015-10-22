@@ -15,6 +15,7 @@
  */
 package jbyoshi.blockdodge.gui;
 
+import java.awt.*;
 import java.awt.event.*;
 
 import jbyoshi.blockdodge.*;
@@ -22,19 +23,29 @@ import jbyoshi.blockdodge.*;
 abstract class Input implements KeyListener {
 	final BlockDodgePanel panel;
 	final BlockDodgeGame game;
+	private final Component display;
 
 	Input(BlockDodgePanel panel) {
 		this.panel = panel;
 		this.game = panel.getGame();
+		this.display = createDisplay();
 	}
 
 	void activate() {
-		panel.addKeyListener(this);
+		panel.frame.addKeyListener(this);
+		panel.add(display);
+		panel.frame.revalidate();
+		panel.frame.repaint();
 	}
 
 	void deactivate() {
-		panel.removeKeyListener(this);
+		panel.frame.removeKeyListener(this);
+		panel.remove(display);
+		panel.frame.revalidate();
+		panel.frame.repaint();
 	}
+
+	abstract Component createDisplay();
 
 	@Override
 	public void keyReleased(KeyEvent e) {
