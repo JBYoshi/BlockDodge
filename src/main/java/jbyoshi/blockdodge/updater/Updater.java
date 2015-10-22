@@ -35,7 +35,6 @@ public final class Updater {
 		} catch (IOException e) {
 			throw new Error(e);
 		}
-		System.out.println(currentVersion);
 		CURRENT_VERSION = currentVersion.toString().trim();
 
 		try {
