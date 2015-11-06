@@ -96,7 +96,7 @@ public final class BlockDodgePanel extends JPanel {
 		inputPauseMenu = new InputPauseMenu(this);
 		player = new PlayerDodgeShape(game, inputInGame);
 		setInput(inputMainMenu);
-		addKeyListener(keys);
+		frame.addKeyListener(keys);
 	}
 
 	public BlockDodgeGame getGame() {
