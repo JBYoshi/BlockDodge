@@ -19,4 +19,6 @@ import java.awt.geom.*;
 
 public interface PlayerController {
 	public Point2D move(PlayerDodgeShape player);
+
+	public void playerDied(PlayerDodgeShape player);
 }

@@ -39,8 +39,9 @@ public abstract class BlockDodgeGame {
 
 	public void remove(DodgeShape shape) {
 		shapes.remove(shape);
+		shape.onDeath();
 		if (shape.getDropCount() == 0) {
-			shape.onRemoved();
+			shape.onFullyRemoved();
 		}
 	}
 

@@ -35,6 +35,11 @@ public final class PlayerDodgeShape extends DodgeShape {
 		setY(clamp(movement.getY(), 0, game.getHeight() - getHeight()));
 	}
 
+	@Override
+	public void onDeath() {
+		controller.playerDied(this);
+	}
+
 	private static double clamp(double val, double min, double max) {
 		if (val < min) {
 			val = min;
@@ -50,7 +55,7 @@ public final class PlayerDodgeShape extends DodgeShape {
 	}
 
 	@Override
-	protected void onRemoved() {
+	protected void onFullyRemoved() {
 		game.stop();
 	}
 

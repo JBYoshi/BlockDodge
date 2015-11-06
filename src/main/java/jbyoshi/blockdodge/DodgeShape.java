@@ -101,7 +101,10 @@ public abstract class DodgeShape {
 		explode();
 	}
 
-	protected void onRemoved() {
+	protected void onDeath() {
+	}
+
+	protected void onFullyRemoved() {
 	}
 
 	protected final class Drop extends BounceDodgeShape {
@@ -154,9 +157,9 @@ public abstract class DodgeShape {
 		}
 
 		@Override
-		protected void onRemoved() {
+		protected void onFullyRemoved() {
 			if (--DodgeShape.this.dropCount == 0) {
-				DodgeShape.this.onRemoved();
+				DodgeShape.this.onFullyRemoved();
 			}
 		}
 	}

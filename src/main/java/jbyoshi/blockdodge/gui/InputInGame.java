@@ -26,9 +26,10 @@ import jbyoshi.blockdodge.*;
 
 final class InputInGame extends Input implements PlayerController, FocusListener {
 	private static final double SQRT_HALF = Math.sqrt(0.5);
-	private final Cursor cursor;
+	private final Cursor visibleCursor, invisibleCursor;
 	private final Robot robot;
 	private boolean shouldMoveMouse;
+	private BlockDodgeButton pauseButton;
 
 	InputInGame(BlockDodgePanel panel) {
 		super(panel);
@@ -42,6 +43,8 @@ final class InputInGame extends Input implements PlayerController, FocusListener
 
 		BufferedImage image = new BufferedImage(PlayerDodgeShape.SIZE, PlayerDodgeShape.SIZE,
 				BufferedImage.TYPE_INT_ARGB);
+		this.invisibleCursor = Toolkit.getDefaultToolkit().createCustomCursor(image,
+				new Point(PlayerDodgeShape.SIZE / 2, PlayerDodgeShape.SIZE / 2), "Player");
 		Graphics2D g = image.createGraphics();
 		g.setColor(PlayerDodgeShape.COLOR);
 		final int s = PlayerDodgeShape.SIZE;
@@ -50,7 +53,7 @@ final class InputInGame extends Input implements PlayerController, FocusListener
 		g.fillRect(s - 1, 0, s, s);
 		g.fillRect(0, s - 1, s, s);
 		g.dispose();
-		this.cursor = Toolkit.getDefaultToolkit().createCustomCursor(image,
+		this.visibleCursor = Toolkit.getDefaultToolkit().createCustomCursor(image,
 				new Point(PlayerDodgeShape.SIZE / 2, PlayerDodgeShape.SIZE / 2), "Player");
 	}
 
@@ -62,6 +65,7 @@ final class InputInGame extends Input implements PlayerController, FocusListener
 		boolean down = panel.keys.isPressed(KeyEvent.VK_DOWN);
 
 		if (left || right || up || down) {
+			panel.setCursor(invisibleCursor);
 			double move = left != right && up != down ? SQRT_HALF : 1;
 			double x = player.getX();
 			if (left && !right) {
@@ -84,6 +88,8 @@ final class InputInGame extends Input implements PlayerController, FocusListener
 			moveMouse(player);
 			return new Point2D.Double(player.getX(), player.getY());
 		}
+
+		panel.setCursor(visibleCursor);
 
 		Point2D startLoc = new Point2D.Double(player.getX(), player.getY());
 		Point2D endLoc = panel.getMousePosition();
@@ -117,7 +123,7 @@ final class InputInGame extends Input implements PlayerController, FocusListener
 	void activate() {
 		super.activate();
 		panel.frame.addFocusListener(this);
-		panel.setCursor(cursor);
+		panel.setCursor(visibleCursor);
 
 		shouldMoveMouse = true;
 	}
@@ -152,11 +158,19 @@ final class InputInGame extends Input implements PlayerController, FocusListener
 		JPanel panel = new JPanel();
 		panel.setLayout(null);
 		panel.setOpaque(false);
-		JComponent button = UI.button("Pause (Escape)", Color.WHITE, e -> game.setPaused(true));
-		button.setLocation(50, 50 + UI.label("Size test").getPreferredSize().height * 3 / 2);
-		button.setSize(button.getPreferredSize());
-		panel.add(button);
+		pauseButton = UI.button("Pause (Escape)", Color.WHITE, e -> game.setPaused(true));
+		pauseButton.setLocation(50, 50 + UI.label("Size test").getPreferredSize().height * 3 / 2);
+		pauseButton.setSize(pauseButton.getPreferredSize());
+		panel.add(pauseButton);
 		return panel;
+	}
+
+	@Override
+	public void playerDied(PlayerDodgeShape player) {
+		panel.setCursor(invisibleCursor);
+		Container display = pauseButton.getParent();
+		display.remove(pauseButton);
+		display.revalidate();
 	}
 
 }
