@@ -16,10 +16,12 @@
 package jbyoshi.blockdodge.util;
 
 import java.awt.event.*;
+import java.lang.reflect.*;
 import java.util.*;
 
 public final class KeyTracker implements KeyListener {
 	private final Set<Integer> presses = new HashSet<>();
+	private static final Map<Integer, String> names = new HashMap<>();
 
 	@Override
 	public void keyTyped(KeyEvent e) {
@@ -37,6 +39,26 @@ public final class KeyTracker implements KeyListener {
 
 	public boolean isPressed(int keyCode) {
 		return presses.contains(keyCode);
+	}
+
+	@Override
+	public String toString() {
+		StringJoiner joiner = new StringJoiner(", ");
+		presses.stream().map(names::get).forEach(joiner::add);
+		return "[" + joiner.toString() + "]";
+	}
+
+	static {
+		for (Field f : KeyEvent.class.getDeclaredFields()) {
+			if (Modifier.isPublic(f.getModifiers()) && Modifier.isStatic(f.getModifiers())
+					&& Modifier.isFinal(f.getModifiers()) && f.getName().startsWith("VK_")) {
+				try {
+					names.put(f.getInt(null), f.getName());
+				} catch (Exception e) {
+					throw new AssertionError(e);
+				}
+			}
+		}
 	}
 
 }
