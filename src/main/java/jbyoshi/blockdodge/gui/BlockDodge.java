@@ -68,7 +68,7 @@ public final class BlockDodge {
 						System.out.println("No updates available");
 					}
 					try {
-						Thread.sleep(TimeUnit.MINUTES.toMillis(10));
+						Thread.sleep(TimeUnit.MINUTES.toMillis(1));
 					} catch (Exception e) {
 						e.printStackTrace();
 					}

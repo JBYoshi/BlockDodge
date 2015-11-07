@@ -25,6 +25,7 @@ public final class Updater {
 	private static final JsonParser PARSER = new JsonParser();
 	private static final String CURRENT_VERSION;
 	private static final URL VERSION_URL;
+	private static String etag;
 
 	static {
 		StringBuilder currentVersion = new StringBuilder();
@@ -46,7 +47,20 @@ public final class Updater {
 
 	public static Optional<Version> findUpdate() throws IOException {
 		try {
-			JsonObject parsed = PARSER.parse(new InputStreamReader(VERSION_URL.openStream())).getAsJsonObject();
+			HttpURLConnection conn = (HttpURLConnection) VERSION_URL.openConnection();
+			if (etag != null) {
+				conn.addRequestProperty("If-None-Match", etag);
+			}
+
+			conn.connect();
+			if (conn.getResponseCode() == HttpURLConnection.HTTP_NOT_MODIFIED) {
+				return Optional.empty();
+			}
+
+			if (conn.getHeaderField("ETag") != null) {
+				etag = conn.getHeaderField("ETag");
+			}
+			JsonObject parsed = PARSER.parse(new InputStreamReader(conn.getInputStream())).getAsJsonObject();
 			if (parsed.has("message")) {
 				throw new IOException("Git API error: " + parsed.get("message"));
 			}
