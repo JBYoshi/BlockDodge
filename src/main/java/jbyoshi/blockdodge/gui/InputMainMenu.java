@@ -65,6 +65,7 @@ final class InputMainMenu extends Input {
 		info.add(UI.label("Avoid the colored blocks flying at you."));
 		info.add(Box.createVerticalStrut(32));
 		info.add(UI.button("Start (Enter)", Color.GREEN, e -> game.stop()));
+		info.add(UI.button("Quit (Delete)", Color.RED, e -> System.exit(0)));
 		info.add(Box.createVerticalGlue());
 		info.add(UI.label(BlockDodge.COPYRIGHT_TEXT, 10));
 		info.add(Box.createVerticalStrut(50));
