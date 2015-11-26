@@ -29,6 +29,7 @@ final class InputInGame extends Input implements PlayerController, FocusListener
 	private final Cursor visibleCursor, invisibleCursor;
 	private final Robot robot;
 	private boolean shouldMoveMouse;
+	private Container display;
 	private BlockDodgeButton pauseButton;
 
 	InputInGame(BlockDodgePanel panel) {
@@ -124,6 +125,8 @@ final class InputInGame extends Input implements PlayerController, FocusListener
 		super.activate();
 		panel.frame.addFocusListener(this);
 		panel.setCursor(visibleCursor);
+		display.add(pauseButton);
+		display.revalidate();
 
 		shouldMoveMouse = true;
 	}
@@ -162,13 +165,13 @@ final class InputInGame extends Input implements PlayerController, FocusListener
 		pauseButton.setLocation(50, 50 + UI.label("Size test").getPreferredSize().height * 3 / 2);
 		pauseButton.setSize(pauseButton.getPreferredSize());
 		panel.add(pauseButton);
+		display = panel;
 		return panel;
 	}
 
 	@Override
 	public void playerDied(PlayerDodgeShape player) {
 		panel.setCursor(invisibleCursor);
-		Container display = pauseButton.getParent();
 		display.remove(pauseButton);
 		display.revalidate();
 	}
