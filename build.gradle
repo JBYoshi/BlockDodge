@@ -62,4 +62,5 @@ processResources {
         include 'jbyoshi/blockdodge/updater/version.txt'
         expand(version: project.version)
     }
+    inputs.property('version', project.version)
 }
