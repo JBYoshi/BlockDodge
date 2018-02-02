@@ -15,14 +15,17 @@
  */
 package jbyoshi.blockdodge.gui;
 
-import java.awt.*;
-import java.util.*;
-import java.util.concurrent.*;
-import java.util.prefs.*;
-
-import javax.swing.*;
-
-import jbyoshi.blockdodge.updater.*;
+import java.awt.Image;
+import java.awt.Toolkit;
+import java.util.Arrays;
+import java.util.Optional;
+import java.util.prefs.BackingStoreException;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JTextField;
+import javax.swing.WindowConstants;
+import jbyoshi.blockdodge.updater.Updater;
+import jbyoshi.blockdodge.updater.Version;
 
 public final class BlockDodge {
 	static final String COPYRIGHT_TEXT = "Copyright 2015 JBYoshi        github.com/JBYoshi/BlockDodge";
@@ -52,39 +55,34 @@ public final class BlockDodge {
 
 		if (Updater.isEnabled()) {
 			new Thread(() -> {
-				Optional<Version> update = Optional.empty();
-				while (true) {
-					try {
-						update = Updater.findUpdate();
-					} catch (Exception e) {
-						JOptionPane.showMessageDialog(frame, e, "Updater error", JOptionPane.ERROR_MESSAGE);
-						e.printStackTrace();
-					}
+				Optional<Version> update;
+				try {
+					update = Updater.findUpdate();
 					if (update.isPresent()) {
 						String name = update.get().getName();
 						if (JOptionPane.showConfirmDialog(frame,
-								new Object[] { "Update available!", name, "Download?" }, "BlockDodge",
-								JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE) == JOptionPane.YES_OPTION) {
+														  new Object[] { "Update available!", name, "Download?" }, "BlockDodge",
+														  JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE) == JOptionPane.YES_OPTION) {
 							try {
 								update.get().open();
 							} catch (Exception e) {
 								JOptionPane
-								.showMessageDialog(frame,
-										new Object[] { "Could not open update in your browser.",
-												new JTextField(update.get().getURL()) },
-										"Update", JOptionPane.ERROR_MESSAGE);
+									.showMessageDialog(frame,
+													   new Object[]{
+														   "Could not open update in your browser.",
+														   new JTextField(update.get().getURL())
+													   },
+													   "Update", JOptionPane.ERROR_MESSAGE
+									);
 							}
 						}
 					} else {
 						System.out.println("No updates available");
 					}
-					try {
-						Thread.sleep(TimeUnit.MINUTES.toMillis(1));
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
+				} catch (Exception e) {
+					JOptionPane.showMessageDialog(frame, e, "Updater error", JOptionPane.ERROR_MESSAGE);
+					e.printStackTrace();
 				}
-
 			} , "Updater").start();
 		}
 
