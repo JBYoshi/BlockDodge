@@ -30,6 +30,17 @@ public final class BlockDodge {
 	static BlockDodgePanel panel;
 
 	public static void main(String[] args) {
+		// macOS initialization code - this has to be run before any AWT classes are loaded
+		System.setProperty("apple.awt.application.name", "Block Dodge");
+		try {
+			Class<?> macApplication = Class.forName("com.apple.eawt.Application");
+			Object applicationInstance = macApplication.getMethod("getApplication").invoke(null);
+			macApplication.getMethod("setDockIconImage", Image.class).invoke(applicationInstance, loadIcon(256));
+		} catch (ClassNotFoundException ignore) {
+		} catch (ReflectiveOperationException e) {
+			throw new AssertionError(e);
+		}
+
 		JFrame frame = new JFrame("Block Dodge " + Updater.getCurrentVersion());
 		panel = new BlockDodgePanel(frame);
 		frame.setIconImages(Arrays.asList(loadIcon(16), loadIcon(32), loadIcon(64), loadIcon(128), loadIcon(256)));
