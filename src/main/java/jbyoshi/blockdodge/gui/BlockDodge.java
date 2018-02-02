@@ -39,9 +39,7 @@ public final class BlockDodge {
 			Class<?> macApplication = Class.forName("com.apple.eawt.Application");
 			Object applicationInstance = macApplication.getMethod("getApplication").invoke(null);
 			macApplication.getMethod("setDockIconImage", Image.class).invoke(applicationInstance, loadIcon(256));
-		} catch (ClassNotFoundException ignore) {
-		} catch (ReflectiveOperationException e) {
-			throw new AssertionError(e);
+		} catch (ReflectiveOperationException ignore) {
 		}
 
 		JFrame frame = new JFrame("Block Dodge " + Updater.getCurrentVersion());
@@ -103,10 +101,8 @@ public final class BlockDodge {
 						new Object[] { "New high score!", score, "Save?" }, frame.getTitle(), JOptionPane.YES_NO_OPTION,
 						JOptionPane.PLAIN_MESSAGE) == JOptionPane.YES_OPTION) {
 					HighScores.updateHighScore(score);
-				} else {
-					// Not a high score.
-					panel.reset();
 				}
+				panel.reset();
 			} catch (BackingStoreException e) {
 				e.printStackTrace();
 			}
