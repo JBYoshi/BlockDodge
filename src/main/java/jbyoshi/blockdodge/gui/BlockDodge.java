@@ -17,6 +17,7 @@ package jbyoshi.blockdodge.gui;
 
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.awt.Window;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.prefs.BackingStoreException;
@@ -43,6 +44,11 @@ public final class BlockDodge {
 		}
 
 		JFrame frame = new JFrame("Block Dodge " + Updater.getCurrentVersion());
+		try {
+			Class.forName("com.apple.eawt.FullScreenUtilities").getMethod("setWindowCanFullScreen", Window.class, boolean.class)
+				.invoke(null, frame, true);
+		} catch (ReflectiveOperationException ignore) {
+		}
 		panel = new BlockDodgePanel(frame);
 		frame.setIconImages(Arrays.asList(loadIcon(16), loadIcon(32), loadIcon(64), loadIcon(128), loadIcon(256)));
 		frame.enableInputMethods(false);
