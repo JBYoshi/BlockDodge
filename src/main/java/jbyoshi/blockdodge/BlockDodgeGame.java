@@ -27,7 +27,8 @@ public abstract class BlockDodgeGame {
 	private static final int FRAME_TIME = 1000 / 75;
 	private Dimension size = new Dimension(0, 0);
 	private final Set<DodgeShape> shapes = new HashSet<DodgeShape>();
-	private final AtomicBoolean stop = new AtomicBoolean(false), pause = new AtomicBoolean(false);
+	private final AtomicBoolean stop = new AtomicBoolean(false), pause = new AtomicBoolean(false),
+			playerActive = new AtomicBoolean(false);
 	private final TaskQueue tasks = new TaskQueue();
 	private volatile double score;
 	private static final RandomChooser<Color> COLORS = new RandomChooser<>(Color.BLUE, Color.CYAN, Color.GREEN,
@@ -40,6 +41,10 @@ public abstract class BlockDodgeGame {
 	public void remove(DodgeShape shape) {
 		shapes.remove(shape);
 		shape.onDeath();
+		if (shape instanceof PlayerDodgeShape) {
+			playerActive.set(false);
+			setPaused(false);
+		}
 		if (shape.getDropCount() == 0) {
 			shape.onFullyRemoved();
 		}
@@ -50,14 +55,14 @@ public abstract class BlockDodgeGame {
 	}
 
 	public void go(PlayerDodgeShape player) {
+		playerActive.set(player != null);
 		if (player != null) {
 			shapes.clear();
 			player.reset();
 			shapes.add(player);
 			score = 0;
-		} else {
-			shapes.remove(player);
 		}
+		pause.set(false);
 		int timer = 0;
 
 		stop.set(false);
@@ -194,13 +199,15 @@ public abstract class BlockDodgeGame {
 		tasks.add(task);
 	}
 
-	public boolean isPaused() {
-		return pause.get();
-	}
-
 	public void setPaused(boolean paused) {
-		pause.set(paused);
-		updatePaused(paused);
+		boolean active = playerActive.get();
+		while (true) {
+			boolean newActive = playerActive.get();
+			pause.set(paused && active);
+			updatePaused(paused && active);
+			if (newActive == active) break;
+			active = newActive;
+		}
 	}
 
 	protected abstract Dimension calculateSize();
