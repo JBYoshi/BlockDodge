@@ -15,14 +15,18 @@
  */
 package jbyoshi.blockdodge.gui;
 
-import java.awt.*;
-import java.util.*;
-import java.util.concurrent.*;
-import java.util.prefs.*;
-
-import javax.swing.*;
-
-import jbyoshi.blockdodge.updater.*;
+import java.awt.Image;
+import java.awt.Toolkit;
+import java.awt.Window;
+import java.util.Arrays;
+import java.util.Optional;
+import java.util.prefs.BackingStoreException;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JTextField;
+import javax.swing.WindowConstants;
+import jbyoshi.blockdodge.updater.Updater;
+import jbyoshi.blockdodge.updater.Version;
 
 public final class BlockDodge {
 	static final String COPYRIGHT_TEXT = "Copyright 2015 JBYoshi        github.com/JBYoshi/BlockDodge";
@@ -30,7 +34,21 @@ public final class BlockDodge {
 	static BlockDodgePanel panel;
 
 	public static void main(String[] args) {
+		// macOS initialization code - this has to be run before any AWT classes are loaded
+		System.setProperty("apple.awt.application.name", "Block Dodge");
+		try {
+			Class<?> macApplication = Class.forName("com.apple.eawt.Application");
+			Object applicationInstance = macApplication.getMethod("getApplication").invoke(null);
+			macApplication.getMethod("setDockIconImage", Image.class).invoke(applicationInstance, loadIcon(256));
+		} catch (ReflectiveOperationException ignore) {
+		}
+
 		JFrame frame = new JFrame("Block Dodge " + Updater.getCurrentVersion());
+		try {
+			Class.forName("com.apple.eawt.FullScreenUtilities").getMethod("setWindowCanFullScreen", Window.class, boolean.class)
+				.invoke(null, frame, true);
+		} catch (ReflectiveOperationException ignore) {
+		}
 		panel = new BlockDodgePanel(frame);
 		frame.setIconImages(Arrays.asList(loadIcon(16), loadIcon(32), loadIcon(64), loadIcon(128), loadIcon(256)));
 		frame.enableInputMethods(false);
@@ -41,39 +59,34 @@ public final class BlockDodge {
 
 		if (Updater.isEnabled()) {
 			new Thread(() -> {
-				Optional<Version> update = Optional.empty();
-				while (true) {
-					try {
-						update = Updater.findUpdate();
-					} catch (Exception e) {
-						JOptionPane.showMessageDialog(frame, e, "Updater error", JOptionPane.ERROR_MESSAGE);
-						e.printStackTrace();
-					}
+				Optional<Version> update;
+				try {
+					update = Updater.findUpdate();
 					if (update.isPresent()) {
 						String name = update.get().getName();
 						if (JOptionPane.showConfirmDialog(frame,
-								new Object[] { "Update available!", name, "Download?" }, "BlockDodge",
-								JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE) == JOptionPane.YES_OPTION) {
+														  new Object[] { "Update available!", name, "Download?" }, "BlockDodge",
+														  JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE) == JOptionPane.YES_OPTION) {
 							try {
 								update.get().open();
 							} catch (Exception e) {
 								JOptionPane
-								.showMessageDialog(frame,
-										new Object[] { "Could not open update in your browser.",
-												new JTextField(update.get().getURL()) },
-										"Update", JOptionPane.ERROR_MESSAGE);
+									.showMessageDialog(frame,
+													   new Object[]{
+														   "Could not open update in your browser.",
+														   new JTextField(update.get().getURL())
+													   },
+													   "Update", JOptionPane.ERROR_MESSAGE
+									);
 							}
 						}
 					} else {
 						System.out.println("No updates available");
 					}
-					try {
-						Thread.sleep(TimeUnit.MINUTES.toMillis(1));
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
+				} catch (Exception e) {
+					JOptionPane.showMessageDialog(frame, e, "Updater error", JOptionPane.ERROR_MESSAGE);
+					e.printStackTrace();
 				}
-
 			} , "Updater").start();
 		}
 
@@ -94,10 +107,8 @@ public final class BlockDodge {
 						new Object[] { "New high score!", score, "Save?" }, frame.getTitle(), JOptionPane.YES_NO_OPTION,
 						JOptionPane.PLAIN_MESSAGE) == JOptionPane.YES_OPTION) {
 					HighScores.updateHighScore(score);
-				} else {
-					// Not a high score.
-					panel.reset();
 				}
+				panel.reset();
 			} catch (BackingStoreException e) {
 				e.printStackTrace();
 			}
