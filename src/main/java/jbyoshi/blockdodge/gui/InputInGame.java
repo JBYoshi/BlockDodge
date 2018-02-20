@@ -93,11 +93,10 @@ final class InputInGame extends Input implements PlayerController, FocusListener
 		panel.setCursor(visibleCursor);
 
 		Point2D startLoc = new Point2D.Double(player.getX(), player.getY());
-		Point2D endLoc = panel.getMousePosition();
-		if (endLoc == null) {
-			return new Point2D.Double(player.getX(), player.getY());
-		}
-		endLoc = new Point2D.Double(endLoc.getX() - player.getWidth() / 2, endLoc.getY() - player.getHeight() / 2);
+		Point mouseLocationOnScreen = MouseInfo.getPointerInfo().getLocation();
+		Point componentLocationOnScreen = panel.getLocationOnScreen();
+		Point2D endLoc = new Point2D.Double(mouseLocationOnScreen.x - componentLocationOnScreen.x - player.getWidth() / 2,
+								            mouseLocationOnScreen.y - componentLocationOnScreen.y - player.getHeight() / 2);
 		Point2D difference = new Point2D.Double(endLoc.getX() - startLoc.getX(), endLoc.getY() - startLoc.getY());
 		if (endLoc.distance(startLoc) <= 1.0) {
 			return endLoc;
