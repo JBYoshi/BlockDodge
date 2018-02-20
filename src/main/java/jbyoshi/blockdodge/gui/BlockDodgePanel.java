@@ -21,16 +21,17 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Shape;
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Consumer;
-import java.util.prefs.BackingStoreException;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import jbyoshi.blockdodge.BlockDodgeGame;
 import jbyoshi.blockdodge.DodgeShape;
 import jbyoshi.blockdodge.PlayerDodgeShape;
+import jbyoshi.blockdodge.util.HighScoreTracker;
 import jbyoshi.blockdodge.util.KeyTracker;
 
 public final class BlockDodgePanel extends JPanel {
@@ -67,7 +68,7 @@ public final class BlockDodgePanel extends JPanel {
 			boolean isHighScore = false;
 			int score = getScore();
 			try {
-				int highScore = HighScores.getHighScore();
+				int highScore = HighScoreTracker.INSTANCE.getHighScore();
 				if (score > highScore) {
 					isHighScore = true;
 				}
@@ -77,7 +78,7 @@ public final class BlockDodgePanel extends JPanel {
 					String highScoreText = "High Score: " + highScore;
 					g.drawString(highScoreText, BlockDodgePanel.this.getWidth() - 50 - g.getFontMetrics().stringWidth(highScoreText), 50);
 				});
-			} catch (BackingStoreException e) {
+			} catch (IOException e) {
 				e.printStackTrace();
 			}
 

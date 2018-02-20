@@ -18,15 +18,16 @@ package jbyoshi.blockdodge.gui;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.Window;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Optional;
-import java.util.prefs.BackingStoreException;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.WindowConstants;
 import jbyoshi.blockdodge.updater.Updater;
 import jbyoshi.blockdodge.updater.Version;
+import jbyoshi.blockdodge.util.HighScoreTracker;
 
 public final class BlockDodge {
 	static final String COPYRIGHT_TEXT = "Copyright 2015 JBYoshi        github.com/JBYoshi/BlockDodge";
@@ -103,15 +104,15 @@ public final class BlockDodge {
 			// High scores
 			try {
 				int score = panel.getGame().getScore();
-				if (score > HighScores.getHighScore() && JOptionPane.showConfirmDialog(frame,
+				if (score > HighScoreTracker.INSTANCE.getHighScore() && JOptionPane.showConfirmDialog(frame,
 						new Object[] { "New high score!", score, "Save?" }, frame.getTitle(), JOptionPane.YES_NO_OPTION,
 						JOptionPane.PLAIN_MESSAGE) == JOptionPane.YES_OPTION) {
-					HighScores.updateHighScore(score);
+					HighScoreTracker.INSTANCE.setHighScore(score);
 				}
-				panel.reset();
-			} catch (BackingStoreException e) {
+			} catch (IOException e) {
 				e.printStackTrace();
 			}
+			panel.reset();
 		}
 	}
 
