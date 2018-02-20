@@ -184,7 +184,7 @@ public abstract class DodgeShape {
 		return shape.getHeight();
 	}
 
-	public Shape getShape() {
+	public final Rectangle2D getShapeCopy() {
 		return new Rectangle2D.Double(getX(), getY(), getWidth(), getHeight());
 	}
 

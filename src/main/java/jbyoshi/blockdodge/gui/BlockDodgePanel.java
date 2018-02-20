@@ -15,20 +15,28 @@
  */
 package jbyoshi.blockdodge.gui;
 
-import java.awt.*;
-import java.awt.image.*;
-import java.util.prefs.*;
-
-import javax.swing.*;
-
-import jbyoshi.blockdodge.*;
-import jbyoshi.blockdodge.util.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Shape;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.function.Consumer;
+import java.util.prefs.BackingStoreException;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
+import jbyoshi.blockdodge.BlockDodgeGame;
+import jbyoshi.blockdodge.DodgeShape;
+import jbyoshi.blockdodge.PlayerDodgeShape;
+import jbyoshi.blockdodge.util.KeyTracker;
 
 public final class BlockDodgePanel extends JPanel {
 	private static final long serialVersionUID = 2675582657135016482L;
-	private boolean isHighScore = false;
 	final JFrame frame;
-	private volatile BufferedImage buffer;
+	private volatile List<Consumer<Graphics2D>> buffer;
 	private final BlockDodgeGame game = new BlockDodgeGame() {
 
 		@Override
@@ -40,35 +48,48 @@ public final class BlockDodgePanel extends JPanel {
 
 		@Override
 		protected void update() {
-			BufferedImage buffer = new BufferedImage(Math.max(1, getWidth()), Math.max(1, getHeight()),
-					BufferedImage.TYPE_INT_RGB);
-			Graphics2D g = buffer.createGraphics();
+			List<Consumer<Graphics2D>> buffer = new LinkedList<>();
 
-			g.setColor(Color.BLACK);
-			g.fillRect(0, 0, buffer.getWidth(), buffer.getHeight());
+			buffer.add(g -> {
+				g.setColor(Color.BLACK);
+				g.fillRect(0, 0, getWidth(), getHeight());
+			});
 
 			for (DodgeShape shape : getShapes()) {
-				g.setColor(shape.getColor());
-				g.fill(shape.getShape());
+				Color cachedColor = shape.getColor();
+				Shape cachedShape = shape.getShapeCopy();
+				buffer.add(g -> {
+					g.setColor(cachedColor);
+					g.fill(cachedShape);
+				});
 			}
 
-			g.setColor(Color.WHITE);
-			g.setFont(g.getFont().deriveFont(20.0f));
+			boolean isHighScore = false;
+			int score = getScore();
 			try {
 				int highScore = HighScores.getHighScore();
-				String highScoreText = "High Score: " + highScore;
-				g.drawString(highScoreText, getWidth() - 50 - g.getFontMetrics().stringWidth(highScoreText), 50);
-				if (getScore() >= highScore + 1) {
+				if (score > highScore) {
 					isHighScore = true;
 				}
-				if (isHighScore) {
-					g.setColor(Color.YELLOW);
-				}
+				buffer.add(g -> {
+					g.setColor(Color.WHITE);
+					g.setFont(g.getFont().deriveFont(20.0f));
+					String highScoreText = "High Score: " + highScore;
+					g.drawString(highScoreText, BlockDodgePanel.this.getWidth() - 50 - g.getFontMetrics().stringWidth(highScoreText), 50);
+				});
 			} catch (BackingStoreException e) {
 				e.printStackTrace();
 			}
-			g.drawString("Score: " + getScore(), 50, 50);
-			g.dispose();
+
+			boolean isHighScore0 = isHighScore;
+			buffer.add(g -> {
+				g.setColor(Color.WHITE);
+				g.setFont(g.getFont().deriveFont(20.0f));
+				if (isHighScore0) {
+					g.setColor(Color.YELLOW);
+				}
+				g.drawString("Score: " + score, 50, 50);
+			});
 
 			BlockDodgePanel.this.buffer = buffer;
 			BlockDodgePanel.this.repaint();
@@ -104,13 +125,12 @@ public final class BlockDodgePanel extends JPanel {
 	}
 
 	public void reset() {
-		isHighScore = false;
 	}
 
 	@Override
 	public void paintComponent(Graphics g) {
 		if (buffer != null) {
-			g.drawImage(buffer, 0, 0, null);
+			buffer.forEach(x -> x.accept((Graphics2D) g));
 		}
 	}
 
